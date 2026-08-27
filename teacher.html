@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پنل دبیر | آما</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f3f5f8; --card: #ffffff; --ink: #1e2938; --ink-soft: #6b7684; --line: #e7eaef;
+    --orange: #ef7d1a; --orange-deep: #d4650a; --orange-tint: #fef1e3;
+    --teal: #0f7c8c; --teal-tint: #e4f5f7;
+    --bad: #d64b3a; --good: #1f9d63; --navy: #14232f;
+    --shadow-sm: 0 1px 3px rgba(20,30,45,0.06), 0 1px 2px rgba(20,30,45,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Vazirmatn', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  .util-bar { background: var(--navy); color: #cdd4dc; font-size: 11.5px; padding: 7px 26px; display: flex; justify-content: space-between; align-items: center; }
+  .util-bar .right { display: flex; gap: 16px; }
+  .util-bar a { color: #cdd4dc; text-decoration: none; }
+  .profile-chip { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); border-radius: 100px; padding: 4px 12px 4px 5px; font-size: 11.5px; color: #fff; }
+  .profile-chip .avatar { width: 20px; height: 20px; border-radius: 50%; background: var(--orange); color: #fff; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+
+  .main-header { background: var(--card); border-bottom: 1px solid var(--line); padding: 14px 26px; display: flex; align-items: center; justify-content: space-between; gap: 20px; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 20; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo-badge { width: 52px; height: 52px; flex-shrink: 0; }
+  .logo-badge img { width: 100%; height: 100%; object-fit: contain; }
+  .brand .school { font-weight: 800; font-size: 15px; }
+  .brand .panel-name { font-size: 11px; color: var(--ink-soft); }
+  .logout-btn { background: var(--ink); color: #fff; border: none; border-radius: 9px; padding: 9px 18px; font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+  .logout-btn:hover { background: var(--orange-deep); }
+
+  .content { max-width: 1080px; margin: 0 auto; padding: 24px 26px 60px; }
+
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .tab { padding: 10px 18px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink-soft); font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; box-shadow: var(--shadow-sm); }
+  .tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 26px; box-shadow: var(--shadow-sm); }
+  .panel h2 { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+  .panel .desc { color: var(--ink-soft); font-size: 12.5px; margin-bottom: 20px; }
+
+  label { display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 7px; color: var(--ink); }
+  .field { margin-bottom: 14px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  input, select { width: 100%; padding: 11px 13px; border-radius: 9px; border: 1.5px solid var(--line); font-family: inherit; font-size: 14px; background: var(--bg); color: var(--ink); }
+  input:focus, select:focus { outline: none; border-color: var(--orange); }
+
+  .checklist { max-height: 160px; overflow-y: auto; border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; background: var(--bg); }
+  .detail-stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+  .detail-stat { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 14px; text-align: center; }
+  .detail-stat .num { font-family: 'JetBrains Mono'; font-weight: 800; font-size: 20px; color: var(--orange-deep); }
+  .detail-stat .lbl { font-size: 11px; color: var(--ink-soft); margin-top: 4px; }
+  .checklist label { display: flex; align-items: center; gap: 8px; font-weight: 400; font-size: 13.5px; color: var(--ink); margin-bottom: 8px; cursor: pointer; }
+  .checklist input[type="checkbox"] { width: auto; }
+
+  .qbank { margin: 18px 0; }
+  .question-row { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+  .question-row input { margin-bottom: 8px; }
+  .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  .question-row select { width: auto; padding: 6px 10px; font-size: 13px; }
+  .remove-q { background: none; border: none; color: var(--bad); font-size: 12.5px; cursor: pointer; padding: 0; font-weight: 700; }
+
+  .ghost-btn { background: none; border: 1.5px dashed var(--line); border-radius: 9px; padding: 10px; width: 100%; color: var(--ink-soft); font-family: inherit; font-size: 13.5px; cursor: pointer; }
+  .ghost-btn:hover { border-color: var(--orange); color: var(--orange-deep); }
+
+  button.submit { width: 100%; padding: 13px; border-radius: 10px; border: none; background: linear-gradient(95deg, var(--orange), var(--orange-deep)); color: #fff; font-family: inherit; font-size: 14.5px; font-weight: 800; cursor: pointer; margin-top: 16px; box-shadow: var(--shadow-sm); }
+  button.submit:disabled { opacity: 0.55; cursor: not-allowed; }
+
+  .msg { margin-top: 14px; font-size: 13px; border-radius: 9px; padding: 10px 12px; display: none; }
+  .msg.error { display: block; background: #fdeceb; color: var(--bad); border: 1px solid rgba(214,75,58,0.3); }
+  .msg.success { display: block; background: rgba(31,157,99,0.08); color: var(--good); border: 1px solid rgba(31,157,99,0.3); }
+
+  .divider { height: 1px; background: var(--line); margin: 26px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th { text-align: right; color: var(--ink-soft); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; padding: 9px; border-bottom: 2px solid var(--line); }
+  td { padding: 11px 9px; border-bottom: 1px solid var(--line); }
+  .empty-state { text-align: center; color: var(--ink-soft); font-size: 13px; padding: 30px 0; }
+
+  .week-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 16px; }
+  .day-col { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px; min-height: 120px; }
+  .day-col h4 { font-size: 13px; margin-bottom: 10px; color: var(--orange-deep); }
+  .part-item { background: var(--card); border: 1px solid var(--line); border-radius: 7px; padding: 6px 8px; font-size: 12.5px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+  .part-item button { background: none; border: none; color: var(--bad); cursor: pointer; font-size: 12px; }
+  .add-part-btn { width: 100%; background: none; border: 1px dashed var(--line); border-radius: 7px; padding: 6px; color: var(--ink-soft); font-size: 12px; cursor: pointer; font-family: inherit; }
+  .add-part-btn:hover { border-color: var(--orange); }
+</style>
+</head>
+<body>
+
+  <div class="util-bar">
+    <span class="profile-chip"><span class="avatar" id="profileAvatar">؟</span><span id="profileChipName">دبیر</span></span>
+    <div class="right"><a href="#">راهنما</a><a href="#">مستندات سامانه</a></div>
+  </div>
+
+  <div class="main-header">
+    <div class="brand">
+      <div class="logo-badge"><img src="assets/logo.png" alt="آما"></div>
+      <div><div class="school">آما</div><div class="panel-name">پنل دبیر</div></div>
+    </div>
+    <button class="logout-btn" id="logoutBtn">خروج</button>
+  </div>
+
+  <div class="content">
+    <div class="tabs">
+      <button class="tab active" data-tab="students">دانش‌آموزان من</button>
+      <button class="tab" data-tab="exams">آزمون گروهی</button>
+      <button class="tab" data-tab="schedule">برنامهٔ کلاسی</button>
+      <button class="tab" data-tab="progress">روند دانش‌آموز</button>
+    </div>
+
+    <div class="panel" id="tab-students">
+      <h2>دانش‌آموزان لینک‌شده به شما</h2>
+      <p class="desc">دانش‌آموزانی که مدیر به شما لینک کرده است</p>
+      <div id="studentGridWrap"><div class="empty-state">در حال بارگذاری...</div></div>
+    </div>
+
+    <div class="panel" id="tab-exams" style="display:none;">
+      <h2>ساخت آزمون گروهی</h2>
+      <p class="desc">دبیر فقط می‌تواند آزمون گروهی بسازد. این آزمون از آزمون‌های مشاور کاملاً مجزاست.</p>
+      <form id="examForm">
+        <div class="row2">
+          <div class="field"><label>عنوان آزمون</label><input type="text" id="examTitle" required placeholder="مثلاً امتحان کلاسی هفتگی"></div>
+          <div class="field"><label>مدت زمان (دقیقه)</label><input type="number" id="examDuration" value="30" min="1" required></div>
+        </div>
+        <div class="field"><label>دانش‌آموزان شرکت‌کننده (گروهی)</label><div id="participantChecklist" class="checklist"></div></div>
+        <div class="qbank"><label>سؤالات آزمون</label><div id="questionList"></div><button type="button" class="ghost-btn" id="addQuestionBtn">+ افزودن سؤال</button></div>
+        <button type="submit" class="submit" id="examSubmitBtn">ساخت و ثبت آزمون</button>
+        <div class="msg" id="examMsg"></div>
+      </form>
+      <div class="divider"></div>
+      <h2>آزمون‌های ساخته‌شدهٔ من</h2>
+      <div id="examListWrap"><div class="empty-state">در حال بارگذاری...</div></div>
+    </div>
+
+    <div class="panel" id="tab-schedule" style="display:none;">
+      <h2>برنامهٔ کلاسی هفتگی</h2>
+      <p class="desc">ساعات کلاس هر دانش‌آموز را مشخص کنید — این برنامه هم به دانش‌آموز و هم به مشاورش نمایش داده می‌شود</p>
+      <div class="field"><label>انتخاب دانش‌آموز</label><select id="scheduleStudentSelect"></select></div>
+      <div id="weekGrid" class="week-grid"></div>
+    </div>
+
+    <div class="panel" id="tab-progress" style="display:none;">
+      <h2>روند پیشرفت دانش‌آموز</h2>
+      <p class="desc">وضعیت کلی هر دانش‌آموز، شامل نمرات و میزان مطالعه</p>
+      <div class="field" style="max-width:340px;"><label>انتخاب دانش‌آموز</label><select id="progressStudentSelect"></select></div>
+      <div class="detail-stat-row" id="progressStatRow"></div>
+      <div style="font-size:12.5px; font-weight:700; margin-bottom:10px;">آخرین نتایج آزمون</div>
+      <div id="progressResultsWrap"><div class="empty-state">یک دانش‌آموز انتخاب کنید</div></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script>
+    let currentSession = null;
+    let myStudents = [];
+    let questionCounter = 0;
+    const dayNames = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'];
+
+    async function init() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) { window.location.href = 'index.html'; return; }
+      currentSession = session;
+
+      const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', session.user.id).single();
+      if (!profile || profile.role !== 'teacher') { window.location.href = 'dashboard.html'; return; }
+
+      document.getElementById('profileChipName').textContent = `${profile.first_name} ${profile.last_name}`;
+      document.getElementById('profileAvatar').textContent = (profile.first_name || '؟').charAt(0);
+      loadStudents(session.user.id);
+    }
+
+    async function loadStudents(teacherId) {
+      const wrap = document.getElementById('studentGridWrap');
+      const { data: links } = await supabaseClient.from('teacher_links').select('student_id').eq('teacher_id', teacherId);
+
+      if (!links || links.length === 0) {
+        wrap.innerHTML = '<div class="empty-state">هنوز هیچ دانش‌آموزی به شما لینک نشده است</div>';
+        renderParticipantChecklist();
+        populateScheduleSelect();
+        populateProgressSelect();
+        return;
+      }
+
+      const ids = links.map(l => l.student_id);
+      const { data: students } = await supabaseClient.from('profiles').select('id, first_name, last_name, grade').in('id', ids);
+      myStudents = students || [];
+
+      wrap.innerHTML = '<table><thead><tr><th>نام</th><th>پایه</th></tr></thead><tbody>' +
+        myStudents.map(s => `<tr><td>${s.first_name} ${s.last_name}</td><td>${s.grade || '—'}</td></tr>`).join('') +
+        '</tbody></table>';
+
+      renderParticipantChecklist();
+      populateScheduleSelect();
+      populateProgressSelect();
+      loadMyExams();
+    }
+
+    function renderParticipantChecklist() {
+      const wrap = document.getElementById('participantChecklist');
+      if (myStudents.length === 0) { wrap.innerHTML = '<div class="empty-state">دانش‌آموزی لینک نشده</div>'; return; }
+      wrap.innerHTML = myStudents.map(s => `
+        <label><input type="checkbox" value="${s.id}" class="participant-check"> ${s.first_name} ${s.last_name}</label>
+      `).join('');
+    }
+
+    document.getElementById('addQuestionBtn').addEventListener('click', () => {
+      questionCounter++;
+      const div = document.createElement('div');
+      div.className = 'question-row';
+      div.innerHTML = `
+        <input type="text" placeholder="متن سؤال" class="q-text" required>
+        <div class="opt-grid">
+          <input type="text" placeholder="گزینه الف" class="q-a">
+          <input type="text" placeholder="گزینه ب" class="q-b">
+          <input type="text" placeholder="گزینه ج" class="q-c">
+          <input type="text" placeholder="گزینه د" class="q-d">
+        </div>
+        <select class="q-correct">
+          <option value="a">پاسخ درست: الف</option>
+          <option value="b">پاسخ درست: ب</option>
+          <option value="c">پاسخ درست: ج</option>
+          <option value="d">پاسخ درست: د</option>
+        </select>
+        <button type="button" class="remove-q" onclick="this.closest('.question-row').remove()">حذف این سؤال</button>
+      `;
+      document.getElementById('questionList').appendChild(div);
+    });
+
+    document.getElementById('examForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById('examMsg');
+      msg.className = 'msg';
+
+      const title = document.getElementById('examTitle').value.trim();
+      const duration = parseInt(document.getElementById('examDuration').value);
+      const participantIds = Array.from(document.querySelectorAll('.participant-check:checked')).map(c => c.value);
+      const questionRows = Array.from(document.querySelectorAll('.question-row'));
+
+      if (!title || participantIds.length === 0 || questionRows.length === 0) {
+        msg.textContent = 'عنوان، حداقل یک شرکت‌کننده و حداقل یک سؤال لازم است.';
+        msg.className = 'msg error';
+        return;
+      }
+
+      const submitBtn = document.getElementById('examSubmitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'در حال ثبت...';
+
+      const { data: exam, error: examError } = await supabaseClient.from('exams').insert({
+        creator_id: currentSession.user.id,
+        creator_role: 'teacher',
+        title,
+        exam_type: 'group',
+        duration_minutes: duration,
+      }).select().single();
+
+      if (examError || !exam) {
+        msg.textContent = examError ? friendlyError(examError) : 'خطا در ساخت آزمون.';
+        msg.className = 'msg error';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'ساخت و ثبت آزمون';
+        return;
+      }
+
+      for (let i = 0; i < questionRows.length; i++) {
+        const row = questionRows[i];
+        const { data: q } = await supabaseClient.from('questions').insert({
+          creator_id: currentSession.user.id,
+          question_text: row.querySelector('.q-text').value,
+          option_a: row.querySelector('.q-a').value,
+          option_b: row.querySelector('.q-b').value,
+          option_c: row.querySelector('.q-c').value,
+          option_d: row.querySelector('.q-d').value,
+          correct_option: row.querySelector('.q-correct').value,
+        }).select().single();
+
+        if (q) {
+          await supabaseClient.from('exam_questions').insert({ exam_id: exam.id, question_id: q.id, order_index: i });
+        }
+      }
+
+      await supabaseClient.from('exam_participants').insert(participantIds.map(sid => ({ exam_id: exam.id, student_id: sid })));
+
+      msg.textContent = 'آزمون گروهی با موفقیت ساخته شد.';
+      msg.className = 'msg success';
+      document.getElementById('examForm').reset();
+      document.getElementById('questionList').innerHTML = '';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'ساخت و ثبت آزمون';
+      loadMyExams();
+    });
+
+    async function loadMyExams() {
+      const wrap = document.getElementById('examListWrap');
+      const { data: exams } = await supabaseClient.from('exams').select('id, title, duration_minutes').eq('creator_id', currentSession.user.id).order('created_at', { ascending: false });
+      if (!exams || exams.length === 0) { wrap.innerHTML = '<div class="empty-state">هنوز آزمونی نساخته‌اید</div>'; return; }
+      wrap.innerHTML = '<table><thead><tr><th>عنوان</th><th>مدت (دقیقه)</th></tr></thead><tbody>' +
+        exams.map(ex => `<tr><td>${ex.title}</td><td>${ex.duration_minutes}</td></tr>`).join('') + '</tbody></table>';
+    }
+
+    function populateScheduleSelect() {
+      const sel = document.getElementById('scheduleStudentSelect');
+      sel.innerHTML = myStudents.map(s => `<option value="${s.id}">${s.first_name} ${s.last_name}</option>`).join('');
+      if (myStudents.length > 0) renderWeekGrid(myStudents[0].id);
+    }
+    document.getElementById('scheduleStudentSelect').addEventListener('change', e => renderWeekGrid(e.target.value));
+
+    function populateProgressSelect() {
+      const sel = document.getElementById('progressStudentSelect');
+      sel.innerHTML = '<option value="">— انتخاب کنید —</option>' + myStudents.map(s => `<option value="${s.id}">${s.first_name} ${s.last_name}</option>`).join('');
+    }
+
+    document.getElementById('progressStudentSelect').addEventListener('change', async (e) => {
+      const studentId = e.target.value;
+      const statRow = document.getElementById('progressStatRow');
+      const resultsWrap = document.getElementById('progressResultsWrap');
+
+      if (!studentId) {
+        statRow.innerHTML = '';
+        resultsWrap.innerHTML = '<div class="empty-state">یک دانش‌آموز انتخاب کنید</div>';
+        return;
+      }
+
+      resultsWrap.innerHTML = '<div class="empty-state">در حال بارگذاری...</div>';
+
+      const { data: results } = await supabaseClient.from('exam_results').select('score, exams(title, creator_role)').eq('student_id', studentId).order('created_at', { ascending: false });
+      const { data: logs } = await supabaseClient.from('study_logs').select('study_hours, test_count').eq('student_id', studentId);
+
+      const totalHours = (logs || []).reduce((s, l) => s + (l.study_hours || 0), 0);
+      const totalTests = (logs || []).reduce((s, l) => s + (l.test_count || 0), 0);
+      const avgScore = results && results.length > 0 ? Math.round(results.reduce((s, r) => s + (r.score || 0), 0) / results.length) : 0;
+
+      statRow.innerHTML = `
+        <div class="detail-stat"><div class="num mono">${avgScore}</div><div class="lbl">میانگین نمره</div></div>
+        <div class="detail-stat"><div class="num mono">${totalHours}</div><div class="lbl">ساعت مطالعه</div></div>
+        <div class="detail-stat"><div class="num mono">${totalTests}</div><div class="lbl">تست زده‌شده</div></div>
+      `;
+
+      if (!results || results.length === 0) {
+        resultsWrap.innerHTML = '<div class="empty-state">هنوز نتیجه‌ای ثبت نشده است</div>';
+      } else {
+        resultsWrap.innerHTML = '<table><thead><tr><th>آزمون</th><th>سازنده</th><th>نمره</th></tr></thead><tbody>' +
+          results.map(r => `<tr><td>${r.exams?.title || '—'}</td><td>${r.exams?.creator_role === 'mentor' ? 'مشاور' : 'دبیر'}</td><td class="mono">${r.score}</td></tr>`).join('') +
+          '</tbody></table>';
+      }
+    });
+
+    async function renderWeekGrid(studentId) {
+      const grid = document.getElementById('weekGrid');
+      const { data: items } = await supabaseClient.from('class_schedule').select('*').eq('teacher_id', currentSession.user.id).eq('student_id', studentId);
+      grid.innerHTML = '';
+      for (let day = 1; day <= 7; day++) {
+        const dayItems = (items || []).filter(it => it.day_of_week === day);
+        const col = document.createElement('div');
+        col.className = 'day-col';
+        col.innerHTML = `
+          <h4>${dayNames[day - 1]}</h4>
+          <div>
+            ${dayItems.map(it => `
+              <div class="part-item" data-id="${it.id}">
+                <span>${it.start_time?.slice(0,5)}-${it.end_time?.slice(0,5)} ${it.subject || ''}</span>
+                <button onclick="deleteClassItem('${it.id}', '${studentId}')">✕</button>
+              </div>
+            `).join('')}
+          </div>
+          <button class="add-part-btn" onclick="addClassItem(${day}, '${studentId}')">+ افزودن کلاس</button>
+        `;
+        grid.appendChild(col);
+      }
+    }
+
+    window.addClassItem = async function (day, studentId) {
+      const startTime = prompt('ساعت شروع کلاس (مثلاً 16:00):');
+      if (!startTime) return;
+      const endTime = prompt('ساعت پایان کلاس (مثلاً 17:30):');
+      if (!endTime) return;
+      const subject = prompt('موضوع کلاس (اختیاری):') || '';
+      await supabaseClient.from('class_schedule').insert({
+        teacher_id: currentSession.user.id, student_id: studentId,
+        day_of_week: day, start_time: startTime, end_time: endTime, subject,
+      });
+      renderWeekGrid(studentId);
+    };
+
+    window.deleteClassItem = async function (itemId, studentId) {
+      await supabaseClient.from('class_schedule').delete().eq('id', itemId);
+      renderWeekGrid(studentId);
+    };
+
+    document.querySelectorAll('.tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).style.display = 'block';
+      });
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await supabaseClient.auth.signOut();
+      window.location.href = 'index.html';
+    });
+
+    init();
+  </script>
+
+  <div style="text-align:center; padding:22px 12px; font-size:11.5px; color:#93a09d; font-family:Vazirmatn,sans-serif;">توسعه‌یافته توسط ابوالفضل حسن‌نژاد — تلگرام: <a href="https://t.me/abolfazl9195" target="_blank" style="color:#ef7d1a; text-decoration:none;">@abolfazl9195</a></div>
+
+</body>
+</html>

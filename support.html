@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پنل پشتیبانی | آما</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f3f5f8; --card: #ffffff; --ink: #1e2938; --ink-soft: #6b7684; --line: #e7eaef;
+    --orange: #ef7d1a; --orange-deep: #d4650a; --orange-tint: #fef1e3;
+    --teal: #0f7c8c; --teal-tint: #e4f5f7; --gold: #b8860f; --gold-tint: #fbf1dd;
+    --bad: #d64b3a; --good: #1f9d63; --navy: #14232f;
+    --shadow-sm: 0 1px 3px rgba(20,30,45,0.06), 0 1px 2px rgba(20,30,45,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Vazirmatn', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  .util-bar { background: var(--navy); color: #cdd4dc; font-size: 11.5px; padding: 7px 26px; display: flex; justify-content: space-between; align-items: center; }
+  .util-bar .right { display: flex; gap: 16px; }
+  .util-bar a { color: #cdd4dc; text-decoration: none; }
+  .profile-chip { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); border-radius: 100px; padding: 4px 12px 4px 5px; font-size: 11.5px; color: #fff; }
+  .profile-chip .avatar { width: 20px; height: 20px; border-radius: 50%; background: var(--orange); color: #fff; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+
+  .main-header { background: var(--card); border-bottom: 1px solid var(--line); padding: 14px 26px; display: flex; align-items: center; justify-content: space-between; gap: 20px; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 20; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo-badge { width: 52px; height: 52px; flex-shrink: 0; }
+  .logo-badge img { width: 100%; height: 100%; object-fit: contain; }
+  .brand .school { font-weight: 800; font-size: 15px; }
+  .brand .panel-name { font-size: 11px; color: var(--ink-soft); }
+  .logout-btn { background: var(--ink); color: #fff; border: none; border-radius: 9px; padding: 9px 18px; font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+  .logout-btn:hover { background: var(--orange-deep); }
+
+  .content { max-width: 1120px; margin: 0 auto; padding: 24px 26px 60px; }
+
+  .stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 14px; margin-bottom: 24px; }
+  .stat-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 14px; }
+  .stat-card .icon-circle { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .stat-card .icon-circle svg { width: 22px; height: 22px; }
+  .stat-card.t-orange .icon-circle { background: var(--orange-tint); color: var(--orange-deep); }
+  .stat-card.t-teal .icon-circle { background: var(--teal-tint); color: var(--teal); }
+  .stat-card .num { font-family: 'JetBrains Mono'; font-weight: 800; font-size: 22px; }
+  .stat-card .lbl { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+
+  .grid2 { display: grid; grid-template-columns: 380px 1fr; gap: 18px; align-items: start; }
+  @media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } }
+
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 26px; box-shadow: var(--shadow-sm); }
+  .panel h2 { font-size: 15.5px; font-weight: 800; margin-bottom: 4px; }
+  .panel .desc { color: var(--ink-soft); font-size: 12px; margin-bottom: 18px; }
+
+  label { display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 7px; color: var(--ink); }
+  .field { margin-bottom: 14px; }
+  input, select { width: 100%; padding: 11px 13px; border-radius: 9px; border: 1.5px solid var(--line); font-family: inherit; font-size: 14px; background: var(--bg); color: var(--ink); }
+  input:focus, select:focus { outline: none; border-color: var(--orange); }
+  button.submit { width: 100%; padding: 12px; border-radius: 10px; border: none; background: linear-gradient(95deg, var(--orange), var(--orange-deep)); color: #fff; font-family: inherit; font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 6px; box-shadow: var(--shadow-sm); }
+  button.submit:disabled { opacity: 0.55; cursor: not-allowed; }
+
+  .msg { margin-top: 14px; font-size: 13px; border-radius: 9px; padding: 10px 12px; display: none; }
+  .msg.error { display: block; background: #fdeceb; color: var(--bad); border: 1px solid rgba(214,75,58,0.3); }
+  .msg.success { display: block; background: rgba(31,157,99,0.08); color: var(--good); border: 1px solid rgba(31,157,99,0.3); }
+
+  .credentials-box { margin-top: 14px; background: var(--orange-tint); border: 1.5px dashed var(--orange); border-radius: 10px; padding: 14px; display: none; }
+  .credentials-box.show { display: block; }
+  .cred-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 14px; }
+  .cred-row .val { font-family: 'JetBrains Mono'; font-weight: 800; color: var(--orange-deep); letter-spacing: 0.4px; }
+  .cred-note { font-size: 11.5px; color: var(--ink-soft); margin-top: 8px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th { text-align: right; color: var(--ink-soft); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; padding: 9px; border-bottom: 2px solid var(--line); }
+  td { padding: 11px 9px; border-bottom: 1px solid var(--line); }
+  .empty-state { text-align: center; color: var(--ink-soft); font-size: 13px; padding: 30px 0; }
+</style>
+</head>
+<body>
+
+  <div class="util-bar">
+    <span class="profile-chip"><span class="avatar" id="profileAvatar">؟</span><span id="profileChipName">پشتیبانی</span></span>
+    <div class="right"><a href="#">راهنما</a><a href="#">مستندات سامانه</a></div>
+  </div>
+
+  <div class="main-header">
+    <div class="brand">
+      <div class="logo-badge"><img src="assets/logo.png" alt="آما"></div>
+      <div><div class="school">آما</div><div class="panel-name">پنل پشتیبانی</div></div>
+    </div>
+    <button class="logout-btn" id="logoutBtn">خروج</button>
+  </div>
+
+  <div class="content">
+    <div class="stat-cards" id="statCards"></div>
+
+    <div class="grid2">
+      <div class="panel">
+        <h2>ثبت‌نام دانش‌آموز جدید</h2>
+        <p class="desc">پس از ثبت، نام کاربری و رمز عبور به‌صورت خودکار ساخته می‌شود</p>
+        <form id="registerForm">
+          <div class="field"><label>نام</label><input type="text" id="first_name" required></div>
+          <div class="field"><label>نام‌خانوادگی</label><input type="text" id="last_name" required></div>
+          <div class="field"><label>کد ملی</label><input type="text" id="national_code" required maxlength="10" inputmode="numeric"></div>
+          <div class="field"><label>نام پدر</label><input type="text" id="father_name"></div>
+          <div class="field"><label>شماره موبایل</label><input type="text" id="mobile" inputmode="numeric" placeholder="09xxxxxxxxx"></div>
+          <div class="field"><label>پایهٔ تحصیلی</label><input type="text" id="grade" placeholder="مثلاً یازدهم ریاضی"></div>
+          <button type="submit" class="submit" id="submitBtn">ثبت‌نام دانش‌آموز</button>
+        </form>
+        <div class="msg" id="msgBox"></div>
+        <div class="credentials-box" id="credBox">
+          <div class="cred-row"><span>نام کاربری</span><span class="val" id="credUsername"></span></div>
+          <div class="cred-row"><span>رمز عبور</span><span class="val" id="credPassword"></span></div>
+          <p class="cred-note">این اطلاعات را همین حالا برای دانش‌آموز یادداشت یا ارسال کنید.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>لیست دانش‌آموزان ثبت‌شده</h2>
+        <p class="desc">دانش‌آموزانی که تاکنون در سامانه ثبت شده‌اند</p>
+        <div id="studentListWrap"><div class="empty-state">در حال بارگذاری...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script>
+    const FUNCTION_URL = `${SUPABASE_URL}/functions/v1/create-user`;
+    let currentSession = null;
+
+    async function init() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) { window.location.href = 'index.html'; return; }
+      currentSession = session;
+
+      const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', session.user.id).single();
+      if (!profile || profile.role !== 'support') { window.location.href = 'dashboard.html'; return; }
+
+      document.getElementById('profileChipName').textContent = `${profile.first_name} ${profile.last_name}`;
+      document.getElementById('profileAvatar').textContent = (profile.first_name || '؟').charAt(0);
+
+      loadStats();
+      loadStudents();
+    }
+
+    async function loadStats() {
+      const { count } = await supabaseClient.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'student');
+      document.getElementById('statCards').innerHTML = `
+        <div class="stat-card t-orange"><div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 14c-4.4 0-8 1.8-8 4v2h16v-2c0-2.2-3.6-4-8-4Z"/><circle cx="12" cy="7" r="4"/></svg></div><div><div class="num mono">${count || 0}</div><div class="lbl">دانش‌آموز ثبت‌شده</div></div></div>
+      `;
+    }
+
+    async function loadStudents() {
+      const { data: students, error } = await supabaseClient
+        .from('profiles').select('first_name, last_name, username, grade, created_at')
+        .eq('role', 'student').order('created_at', { ascending: false });
+
+      const wrap = document.getElementById('studentListWrap');
+      if (error || !students || students.length === 0) {
+        wrap.innerHTML = '<div class="empty-state">هنوز دانش‌آموزی ثبت نشده است</div>';
+        return;
+      }
+      let html = '<table><thead><tr><th>نام</th><th>نام کاربری</th><th>پایه</th></tr></thead><tbody>';
+      students.forEach(s => { html += `<tr><td>${s.first_name} ${s.last_name}</td><td class="mono">${s.username}</td><td>${s.grade || '—'}</td></tr>`; });
+      html += '</tbody></table>';
+      wrap.innerHTML = html;
+    }
+
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msgBox = document.getElementById('msgBox');
+      const credBox = document.getElementById('credBox');
+      const submitBtn = document.getElementById('submitBtn');
+      msgBox.className = 'msg'; credBox.className = 'credentials-box';
+
+      const payload = {
+        role: 'student',
+        first_name: document.getElementById('first_name').value.trim(),
+        last_name: document.getElementById('last_name').value.trim(),
+        national_code: document.getElementById('national_code').value.trim(),
+        father_name: document.getElementById('father_name').value.trim(),
+        mobile: document.getElementById('mobile').value.trim(),
+        grade: document.getElementById('grade').value.trim(),
+      };
+
+      submitBtn.disabled = true; submitBtn.textContent = 'در حال ثبت...';
+
+      try {
+        const res = await fetch(FUNCTION_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentSession.access_token}` },
+          body: JSON.stringify(payload),
+        });
+        const result = await res.json();
+
+        if (!res.ok || result.error) {
+          msgBox.textContent = result.error || 'خطایی رخ داد.'; msgBox.className = 'msg error';
+        } else {
+          msgBox.textContent = 'دانش‌آموز با موفقیت ثبت شد.'; msgBox.className = 'msg success';
+          document.getElementById('credUsername').textContent = result.username;
+          document.getElementById('credPassword').textContent = result.password;
+          credBox.className = 'credentials-box show';
+          document.getElementById('registerForm').reset();
+          loadStudents(); loadStats();
+        }
+      } catch (err) {
+        msgBox.textContent = 'خطا در ارتباط با سرور.'; msgBox.className = 'msg error';
+      }
+      submitBtn.disabled = false; submitBtn.textContent = 'ثبت‌نام دانش‌آموز';
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await supabaseClient.auth.signOut();
+      window.location.href = 'index.html';
+    });
+
+    init();
+  </script>
+
+  <div style="text-align:center; padding:22px 12px; font-size:11.5px; color:#93a09d; font-family:Vazirmatn,sans-serif;">توسعه‌یافته توسط ابوالفضل حسن‌نژاد — تلگرام: <a href="https://t.me/abolfazl9195" target="_blank" style="color:#ef7d1a; text-decoration:none;">@abolfazl9195</a></div>
+
+</body>
+</html>

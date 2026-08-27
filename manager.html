@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پنل مدیر | آما</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f3f5f8; --card: #ffffff; --ink: #1e2938; --ink-soft: #6b7684; --line: #e7eaef;
+    --orange: #ef7d1a; --orange-deep: #d4650a; --orange-tint: #fef1e3;
+    --teal: #0f7c8c; --teal-tint: #e4f5f7; --gold: #b8860f; --gold-tint: #fbf1dd;
+    --purple: #6849c9; --purple-tint: #efeafb;
+    --bad: #d64b3a; --good: #1f9d63; --navy: #14232f;
+    --shadow-sm: 0 1px 3px rgba(20,30,45,0.06), 0 1px 2px rgba(20,30,45,0.08);
+    --shadow-md: 0 8px 24px -8px rgba(20,30,45,0.14);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Vazirmatn', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  .util-bar { background: var(--navy); color: #cdd4dc; font-size: 11.5px; padding: 7px 26px; display: flex; justify-content: space-between; align-items: center; }
+  .util-bar .right { display: flex; gap: 16px; }
+  .util-bar a { color: #cdd4dc; text-decoration: none; }
+  .profile-chip { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); border-radius: 100px; padding: 4px 12px 4px 5px; font-size: 11.5px; color: #fff; }
+  .profile-chip .avatar { width: 20px; height: 20px; border-radius: 50%; background: var(--orange); color: #fff; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+
+  .main-header { background: var(--card); border-bottom: 1px solid var(--line); padding: 14px 26px; display: flex; align-items: center; justify-content: space-between; gap: 20px; box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 20; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo-badge { width: 52px; height: 52px; flex-shrink: 0; }
+  .logo-badge img { width: 100%; height: 100%; object-fit: contain; }
+  .brand .school { font-weight: 800; font-size: 15px; }
+  .brand .panel-name { font-size: 11px; color: var(--ink-soft); }
+  .logout-btn { background: var(--ink); color: #fff; border: none; border-radius: 9px; padding: 9px 18px; font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+  .logout-btn:hover { background: var(--orange-deep); }
+
+  .content { max-width: 1160px; margin: 0 auto; padding: 24px 26px 60px; }
+
+  .stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 14px; margin-bottom: 26px; }
+  .stat-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 14px; }
+  .stat-card .icon-circle { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .stat-card .icon-circle svg { width: 22px; height: 22px; }
+  .stat-card.t-orange .icon-circle { background: var(--orange-tint); color: var(--orange-deep); }
+  .stat-card.t-teal .icon-circle { background: var(--teal-tint); color: var(--teal); }
+  .stat-card.t-gold .icon-circle { background: var(--gold-tint); color: var(--gold); }
+  .stat-card.t-purple .icon-circle { background: var(--purple-tint); color: var(--purple); }
+  .stat-card .num { font-family: 'JetBrains Mono'; font-weight: 800; font-size: 22px; }
+  .stat-card .lbl { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
+  .tab { padding: 10px 18px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink-soft); font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; box-shadow: var(--shadow-sm); }
+  .tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 28px; box-shadow: var(--shadow-sm); }
+  .panel h2 { font-size: 16.5px; font-weight: 800; margin-bottom: 4px; }
+  .panel .desc { color: var(--ink-soft); font-size: 12.5px; margin-bottom: 22px; }
+
+  label { display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 7px; color: var(--ink); }
+  .field { margin-bottom: 16px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  input, select { width: 100%; padding: 11px 13px; border-radius: 9px; border: 1.5px solid var(--line); font-family: inherit; font-size: 14px; background: var(--bg); color: var(--ink); }
+  input:focus, select:focus { outline: none; border-color: var(--orange); }
+  button.submit { padding: 12px 28px; border-radius: 10px; border: none; background: linear-gradient(95deg, var(--orange), var(--orange-deep)); color: #fff; font-family: inherit; font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 8px; box-shadow: var(--shadow-sm); }
+  button.submit:disabled { opacity: 0.55; cursor: not-allowed; }
+
+  .msg { margin-top: 14px; font-size: 13px; border-radius: 9px; padding: 10px 12px; display: none; }
+  .msg.error { display: block; background: #fdeceb; color: var(--bad); border: 1px solid rgba(214,75,58,0.3); }
+  .msg.success { display: block; background: rgba(31,157,99,0.08); color: var(--good); border: 1px solid rgba(31,157,99,0.3); }
+
+  .credentials-box { margin-top: 16px; background: var(--orange-tint); border: 1.5px dashed var(--orange); border-radius: 10px; padding: 16px; display: none; }
+  .credentials-box.show { display: block; }
+  .cred-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 14px; }
+  .cred-row .val { font-family: 'JetBrains Mono'; font-weight: 800; color: var(--orange-deep); letter-spacing: 0.4px; }
+  .cred-note { font-size: 11.5px; color: var(--ink-soft); margin-top: 8px; }
+
+  .divider { height: 1px; background: var(--line); margin: 26px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th { text-align: right; color: var(--ink-soft); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; padding: 10px; border-bottom: 2px solid var(--line); }
+  td { padding: 12px 10px; border-bottom: 1px solid var(--line); }
+  .empty-state { text-align: center; color: var(--ink-soft); font-size: 13px; padding: 34px 0; }
+
+  .status-pill { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 100px; }
+  .status-pill.active { background: rgba(31,157,99,0.1); color: var(--good); }
+  .status-pill.inactive { background: rgba(214,75,58,0.1); color: var(--bad); }
+  .deact-btn { background: none; border: 1px solid rgba(214,75,58,0.35); color: var(--bad); border-radius: 7px; padding: 6px 13px; font-size: 12px; cursor: pointer; font-family: inherit; font-weight: 700; }
+  .act-btn { background: none; border: 1px solid rgba(31,157,99,0.35); color: var(--good); border-radius: 7px; padding: 6px 13px; font-size: 12px; cursor: pointer; font-family: inherit; font-weight: 700; }
+  .role-pill { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 100px; background: var(--purple-tint); color: var(--purple); }
+</style>
+</head>
+<body>
+
+  <div class="util-bar">
+    <span class="profile-chip"><span class="avatar" id="profileAvatar">؟</span><span id="profileChipName">مدیر مؤسسه</span></span>
+    <div class="right"><a href="#">راهنما</a><a href="#">مستندات سامانه</a></div>
+  </div>
+
+  <div class="main-header">
+    <div class="brand">
+      <div class="logo-badge"><img src="assets/logo.png" alt="آما"></div>
+      <div><div class="school">آما</div><div class="panel-name">پنل مدیریت مؤسسه</div></div>
+    </div>
+    <button class="logout-btn" id="logoutBtn">خروج</button>
+  </div>
+
+  <div class="content">
+
+    <div class="stat-cards" id="statCards"></div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="overview">نمای کلی</button>
+      <button class="tab" data-tab="createuser">ساخت کاربر جدید</button>
+      <button class="tab" data-tab="linking">لینک‌کردن نقش‌ها</button>
+      <button class="tab" data-tab="users">مدیریت کاربران</button>
+    </div>
+
+    <div class="panel" id="tab-overview">
+      <h2>خوش آمدید</h2>
+      <p class="desc">از این پنل می‌توانید کل مؤسسه را مدیریت کنید — ساخت حساب برای کارکنان و دانش‌آموزان، لینک‌کردن آن‌ها، و نظارت بر فعالیت‌ها.</p>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:14px;">
+        <div style="background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:18px;">
+          <div style="font-weight:800; font-size:13.5px; margin-bottom:6px;">۱. ساخت کاربر</div>
+          <div style="font-size:12px; color:var(--ink-soft); line-height:1.8;">در تب «ساخت کاربر جدید»، برای هر نقش (پشتیبانی، مشاور، دبیر، دانش‌آموز) حساب بسازید.</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:18px;">
+          <div style="font-weight:800; font-size:13.5px; margin-bottom:6px;">۲. لینک‌کردن</div>
+          <div style="font-size:12px; color:var(--ink-soft); line-height:1.8;">در تب «لینک‌کردن نقش‌ها»، مشاور/دبیر/پشتیبانی را به دانش‌آموز متصل کنید.</div>
+        </div>
+        <div style="background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:18px;">
+          <div style="font-weight:800; font-size:13.5px; margin-bottom:6px;">۳. نظارت</div>
+          <div style="font-size:12px; color:var(--ink-soft); line-height:1.8;">در تب «مدیریت کاربران»، حساب‌ها را فعال یا غیرفعال کنید.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="tab-createuser" style="display:none;">
+      <h2>ساخت حساب کاربری جدید</h2>
+      <p class="desc">مدیر می‌تواند برای هر نقشی حساب بسازد. نام کاربری و رمز به‌صورت خودکار تولید می‌شود.</p>
+      <form id="createForm">
+        <div class="field"><label>نقش</label>
+          <select id="newRole">
+            <option value="support">پشتیبانی</option>
+            <option value="mentor">مشاور</option>
+            <option value="teacher">دبیر</option>
+            <option value="student">دانش‌آموز</option>
+          </select>
+        </div>
+        <div class="row2">
+          <div class="field"><label>نام</label><input type="text" id="first_name" required></div>
+          <div class="field"><label>نام‌خانوادگی</label><input type="text" id="last_name" required></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>کد ملی</label><input type="text" id="national_code" required></div>
+          <div class="field"><label>نام پدر</label><input type="text" id="father_name"></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>شماره موبایل</label><input type="text" id="mobile"></div>
+          <div class="field"><label>پایهٔ تحصیلی (فقط دانش‌آموز)</label><input type="text" id="grade"></div>
+        </div>
+        <button type="submit" class="submit" id="createBtn">ساخت حساب</button>
+        <div class="msg" id="createMsg"></div>
+        <div class="credentials-box" id="credBox">
+          <div class="cred-row"><span>نام کاربری</span><span class="val" id="credUsername"></span></div>
+          <div class="cred-row"><span>رمز عبور</span><span class="val" id="credPassword"></span></div>
+          <p class="cred-note">این اطلاعات را همین حالا یادداشت یا تحویل دهید.</p>
+        </div>
+      </form>
+    </div>
+
+    <div class="panel" id="tab-linking" style="display:none;">
+      <h2>لینک‌کردن مشاور/دبیر/پشتیبانی به دانش‌آموز</h2>
+      <p class="desc">یک دانش‌آموز و یک کارمند را انتخاب و به هم لینک کنید</p>
+      <div class="row2">
+        <div class="field"><label>نوع لینک</label>
+          <select id="linkType"><option value="mentor">مشاور</option><option value="teacher">دبیر</option><option value="support">پشتیبانی</option></select>
+        </div>
+        <div class="field"><label>انتخاب کارمند</label><select id="linkStaffSelect"></select></div>
+      </div>
+      <div class="field"><label>انتخاب دانش‌آموز</label><select id="linkStudentSelect"></select></div>
+      <button class="submit" id="linkBtn">ثبت لینک</button>
+      <div class="msg" id="linkMsg"></div>
+    </div>
+
+    <div class="panel" id="tab-users" style="display:none;">
+      <h2>مدیریت کاربران</h2>
+      <p class="desc">فعال یا غیرفعال‌کردن حساب‌ها</p>
+      <div id="usersWrap"><div class="empty-state">در حال بارگذاری...</div></div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script>
+    let currentSession = null;
+    const roleLabels = { manager: 'مدیر', support: 'پشتیبانی', mentor: 'مشاور', teacher: 'دبیر', student: 'دانش‌آموز' };
+
+    async function init() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) { window.location.href = 'index.html'; return; }
+      currentSession = session;
+
+      const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', session.user.id).single();
+      if (!profile || profile.role !== 'manager') { window.location.href = 'dashboard.html'; return; }
+
+      document.getElementById('profileChipName').textContent = `${profile.first_name} ${profile.last_name}`;
+      document.getElementById('profileAvatar').textContent = (profile.first_name || '؟').charAt(0);
+
+      loadOverview();
+      loadLinkingSelectors();
+      loadUsers();
+    }
+
+    async function loadOverview() {
+      const { data: all } = await supabaseClient.from('profiles').select('role');
+      const { count: examCount } = await supabaseClient.from('exams').select('*', { count: 'exact', head: true });
+      const counts = { student: 0, mentor: 0, teacher: 0, support: 0 };
+      (all || []).forEach(p => { if (counts[p.role] !== undefined) counts[p.role]++; });
+
+      document.getElementById('statCards').innerHTML = `
+        <div class="stat-card t-orange"><div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 14c-4.4 0-8 1.8-8 4v2h16v-2c0-2.2-3.6-4-8-4Z"/><circle cx="12" cy="7" r="4"/></svg></div><div><div class="num mono">${counts.student}</div><div class="lbl">دانش‌آموز</div></div></div>
+        <div class="stat-card t-teal"><div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 20h-6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h8l6 6v10a2 2 0 0 1-2 2h-1"/><path d="M14 4v6h6"/></svg></div><div><div class="num mono">${counts.mentor}</div><div class="lbl">مشاور</div></div></div>
+        <div class="stat-card t-gold"><div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13Z"/><path d="M8 7h8M8 11h5"/></svg></div><div><div class="num mono">${counts.teacher}</div><div class="lbl">دبیر</div></div></div>
+        <div class="stat-card t-purple"><div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><div><div class="num mono">${counts.support}</div><div class="lbl">پشتیبانی</div></div></div>
+        <div class="stat-card t-orange"><div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></div><div><div class="num mono">${examCount || 0}</div><div class="lbl">آزمون</div></div></div>
+      `;
+    }
+
+    document.getElementById('createForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById('createMsg');
+      const credBox = document.getElementById('credBox');
+      msg.className = 'msg'; credBox.className = 'credentials-box';
+
+      const payload = {
+        role: document.getElementById('newRole').value,
+        first_name: document.getElementById('first_name').value.trim(),
+        last_name: document.getElementById('last_name').value.trim(),
+        national_code: document.getElementById('national_code').value.trim(),
+        father_name: document.getElementById('father_name').value.trim(),
+        mobile: document.getElementById('mobile').value.trim(),
+        grade: document.getElementById('grade').value.trim(),
+      };
+
+      const btn = document.getElementById('createBtn');
+      btn.disabled = true; btn.textContent = 'در حال ثبت...';
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/create-user`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentSession.access_token}` },
+          body: JSON.stringify(payload),
+        });
+        const result = await res.json();
+        if (!res.ok || result.error) {
+          msg.textContent = result.error || 'خطایی رخ داد.'; msg.className = 'msg error';
+        } else {
+          msg.textContent = 'حساب با موفقیت ساخته شد.'; msg.className = 'msg success';
+          document.getElementById('credUsername').textContent = result.username;
+          document.getElementById('credPassword').textContent = result.password;
+          credBox.className = 'credentials-box show';
+          document.getElementById('createForm').reset();
+          loadOverview(); loadLinkingSelectors(); loadUsers();
+        }
+      } catch (err) {
+        msg.textContent = 'خطا در ارتباط با سرور.'; msg.className = 'msg error';
+      }
+      btn.disabled = false; btn.textContent = 'ساخت حساب';
+    });
+
+    async function loadLinkingSelectors() {
+      const linkType = document.getElementById('linkType').value;
+      const { data: staff } = await supabaseClient.from('profiles').select('id, first_name, last_name').eq('role', linkType);
+      const { data: students } = await supabaseClient.from('profiles').select('id, first_name, last_name').eq('role', 'student');
+      document.getElementById('linkStaffSelect').innerHTML = (staff || []).map(s => `<option value="${s.id}">${s.first_name} ${s.last_name}</option>`).join('') || '<option value="">— موردی یافت نشد —</option>';
+      document.getElementById('linkStudentSelect').innerHTML = (students || []).map(s => `<option value="${s.id}">${s.first_name} ${s.last_name}</option>`).join('') || '<option value="">— موردی یافت نشد —</option>';
+    }
+    document.getElementById('linkType').addEventListener('change', loadLinkingSelectors);
+
+    document.getElementById('linkBtn').addEventListener('click', async () => {
+      const msg = document.getElementById('linkMsg'); msg.className = 'msg';
+      const linkType = document.getElementById('linkType').value;
+      const staffId = document.getElementById('linkStaffSelect').value;
+      const studentId = document.getElementById('linkStudentSelect').value;
+      if (!staffId || !studentId) { msg.textContent = 'هر دو مورد باید انتخاب شوند.'; msg.className = 'msg error'; return; }
+      const tableMap = { mentor: 'mentor_links', teacher: 'teacher_links', support: 'support_links' };
+      const colMap = { mentor: 'mentor_id', teacher: 'teacher_id', support: 'support_id' };
+      const { error } = await supabaseClient.from(tableMap[linkType]).insert({ [colMap[linkType]]: staffId, student_id: studentId });
+      if (error) { msg.textContent = friendlyError(error); msg.className = 'msg error'; }
+      else { msg.textContent = 'لینک با موفقیت ثبت شد.'; msg.className = 'msg success'; }
+    });
+
+    async function loadUsers() {
+      const wrap = document.getElementById('usersWrap');
+      const { data: users } = await supabaseClient.from('profiles').select('*').neq('role', 'manager').order('created_at', { ascending: false });
+      if (!users || users.length === 0) { wrap.innerHTML = '<div class="empty-state">کاربری یافت نشد</div>'; return; }
+      wrap.innerHTML = '<table><thead><tr><th>نام</th><th>نقش</th><th>وضعیت</th><th>عملیات</th></tr></thead><tbody>' +
+        users.map(u => `
+          <tr>
+            <td>${u.first_name} ${u.last_name}</td>
+            <td><span class="role-pill">${roleLabels[u.role] || u.role}</span></td>
+            <td><span class="status-pill ${u.is_active ? 'active' : 'inactive'}">${u.is_active ? 'فعال' : 'غیرفعال'}</span></td>
+            <td style="display:flex; gap:6px; flex-wrap:wrap;">
+              ${u.is_active ? `<button class="deact-btn" onclick="toggleActive('${u.id}', false)">غیرفعال کن</button>` : `<button class="act-btn" onclick="toggleActive('${u.id}', true)">فعال کن</button>`}
+              <button class="deact-btn" style="border-color: var(--line); color: var(--ink-soft);" onclick="resetUserPassword('${u.id}', '${u.first_name} ${u.last_name}')">بازنشانی رمز</button>
+            </td>
+          </tr>`).join('') + '</tbody></table>';
+    }
+
+    window.toggleActive = async function (userId, makeActive) {
+      await supabaseClient.from('profiles').update({ is_active: makeActive }).eq('id', userId);
+      loadUsers();
+    };
+
+    window.resetUserPassword = async function (userId, fullName) {
+      if (!confirm(`رمز عبور «${fullName}» بازنشانی شود؟ رمز فعلی دیگر کار نخواهد کرد.`)) return;
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/reset-password`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${currentSession.access_token}` },
+          body: JSON.stringify({ target_user_id: userId }),
+        });
+        const result = await res.json();
+
+        if (!res.ok || result.error) {
+          alert(result.error || 'خطایی رخ داد.');
+        } else {
+          alert(`رمز جدید «${fullName}»: ${result.password}\n\nاین رمز را همین حالا یادداشت یا تحویل دهید — دوباره قابل‌بازیابی نیست.`);
+        }
+      } catch (err) {
+        alert('خطا در ارتباط با سرور.');
+      }
+    };
+
+    document.querySelectorAll('.tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).style.display = 'block';
+      });
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await supabaseClient.auth.signOut();
+      window.location.href = 'index.html';
+    });
+
+    init();
+  </script>
+
+  <div style="text-align:center; padding:22px 12px; font-size:11.5px; color:#93a09d; font-family:Vazirmatn,sans-serif;">توسعه‌یافته توسط ابوالفضل حسن‌نژاد — تلگرام: <a href="https://t.me/abolfazl9195" target="_blank" style="color:#ef7d1a; text-decoration:none;">@abolfazl9195</a></div>
+</body>
+</html>

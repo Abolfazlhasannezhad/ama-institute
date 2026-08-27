@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>داشبورد | آما</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #070d11;
+    --panel-solid: #0f171c;
+    --orange: #ee7b1f;
+    --orange-2: #f4993f;
+    --teal: #1c7a92;
+    --ink: #eef3f2;
+    --muted: #8fa2a0;
+    --line: rgba(255,255,255,0.09);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Vazirmatn', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 32px;
+    position: relative;
+    overflow-x: hidden;
+  }
+  .glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.25;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow.orange { width: 480px; height: 480px; background: var(--orange); top: -180px; left: -160px; }
+  .glow.teal { width: 480px; height: 480px; background: var(--teal); bottom: -200px; right: -160px; }
+
+  .topbar {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 760px;
+    margin: 0 auto 32px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand img { width: 34px; height: auto; }
+  .brand span { font-weight: 800; font-size: 17px; }
+
+  .logout {
+    background: rgba(255,255,255,0.04);
+    border: 1.5px solid var(--line);
+    border-radius: 9px;
+    padding: 9px 18px;
+    font-family: inherit;
+    font-size: 13.5px;
+    cursor: pointer;
+    color: var(--ink);
+    transition: border-color 0.15s ease;
+  }
+  .logout:hover { border-color: var(--orange); }
+
+  .card-border {
+    position: relative;
+    z-index: 1;
+    padding: 1.5px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--orange), transparent 40%, transparent 60%, var(--teal));
+    max-width: 760px;
+    margin: 0 auto;
+    box-shadow: 0 30px 80px -25px rgba(0,0,0,0.6);
+  }
+  .card {
+    background: var(--panel-solid);
+    border-radius: 18.5px;
+    padding: 36px;
+  }
+
+  .role-tag {
+    display: inline-block;
+    background: linear-gradient(90deg, rgba(238,123,31,0.18), rgba(28,122,146,0.18));
+    border: 1px solid rgba(238,123,31,0.3);
+    color: var(--orange-2);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 100px;
+    margin-bottom: 18px;
+  }
+  h1 { font-size: 25px; margin-bottom: 8px; font-weight: 800; }
+  p.note { color: var(--muted); font-size: 14.5px; line-height: 2; }
+  #loading { position: relative; z-index: 1; text-align: center; padding: 80px 0; color: var(--muted); }
+</style>
+</head>
+<body>
+
+  <div class="glow orange"></div>
+  <div class="glow teal"></div>
+
+  <div id="loading">در حال بارگذاری اطلاعات...</div>
+
+  <div id="content" style="display:none;">
+    <div class="topbar">
+      <div class="brand">
+        <img src="assets/logo.png" alt="آما">
+        <span>سامانهٔ هوشمند آما</span>
+      </div>
+      <button class="logout" id="logoutBtn">خروج</button>
+    </div>
+
+    <div class="card-border">
+      <div class="card">
+        <span class="role-tag" id="roleTag"></span>
+        <h1 id="welcomeText"></h1>
+        <p class="note">
+          این یک صفحهٔ داشبورد موقته که فقط برای تست موفقیت‌آمیز بودن اتصال به دیتابیس ساخته شده.
+          در گام‌های بعدی، این صفحه رو بر اساس نقش هر کاربر (مدیر، پشتیبانی، مشاور، دبیر، دانش‌آموز)
+          به یک پنل کامل و اختصاصی تبدیل می‌کنیم.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script>
+    const roleLabels = {
+      manager: 'مدیر مؤسسه',
+      support: 'پشتیبانی',
+      mentor: 'مشاور',
+      teacher: 'دبیر',
+      student: 'دانش‌آموز'
+    };
+
+    async function loadDashboard() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+
+      if (!session) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      const { data: profile, error } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+
+      if (error || !profile) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // هدایت خودکار به پنل اختصاصی هر نقش
+      if (profile.role === 'support') {
+        window.location.href = 'support.html';
+        return;
+      }
+      if (profile.role === 'mentor') {
+        window.location.href = 'mentor.html';
+        return;
+      }
+      if (profile.role === 'teacher') {
+        window.location.href = 'teacher.html';
+        return;
+      }
+      if (profile.role === 'student') {
+        window.location.href = 'student.html';
+        return;
+      }
+      if (profile.role === 'manager') {
+        window.location.href = 'manager.html';
+        return;
+      }
+
+      document.getElementById('roleTag').textContent = roleLabels[profile.role] || profile.role;
+      document.getElementById('welcomeText').textContent = `خوش آمدید، ${profile.first_name} ${profile.last_name}`;
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
+    }
+
+    document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+      await supabaseClient.auth.signOut();
+      window.location.href = 'index.html';
+    });
+
+    loadDashboard();
+  </script>
+
+</body>
+</html>
