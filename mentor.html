@@ -196,6 +196,13 @@
       <p class="desc">یک دانش‌آموز را انتخاب کن و برای هر روز هفته پارت‌های مطالعاتی تعریف کن</p>
       <div class="field"><label>انتخاب دانش‌آموز</label><select id="planStudentSelect"></select></div>
       <div id="weekGrid" class="week-grid"></div>
+ 
+      <div class="field" style="margin-top:20px;">
+        <label>توضیحات کلی این برنامه (برای دانش‌آموز نمایش داده می‌شود)</label>
+        <textarea id="planNoteText" rows="3" placeholder="مثلاً: این هفته تمرکز بیشتر روی مثلثات باشه، تست‌های فصل ۴ رو حتماً بزن." style="width:100%; padding:11px 13px; border-radius:9px; border:1.5px solid var(--line); font-family:inherit; font-size:14px; background:var(--bg); color:var(--ink); resize:vertical;"></textarea>
+        <button class="submit" id="savePlanNoteBtn" style="margin-top:10px;">ذخیرهٔ توضیحات</button>
+      </div>
+ 
       <div class="msg" id="planMsg"></div>
     </div>
  
@@ -457,11 +464,41 @@
       sel.innerHTML = myStudents.map(s => `<option value="${s.id}">${s.first_name} ${s.last_name}</option>`).join('');
       if (myStudents.length > 0) {
         renderWeekGrid(myStudents[0].id);
+        loadPlanNote(myStudents[0].id);
       }
     }
  
     document.getElementById('planStudentSelect').addEventListener('change', (e) => {
       renderWeekGrid(e.target.value);
+      loadPlanNote(e.target.value);
+    });
+ 
+    async function loadPlanNote(studentId) {
+      const { data } = await supabaseClient.from('plan_notes').select('note').eq('mentor_id', currentSession.user.id).eq('student_id', studentId).maybeSingle();
+      document.getElementById('planNoteText').value = data?.note || '';
+    }
+ 
+    document.getElementById('savePlanNoteBtn').addEventListener('click', async () => {
+      const studentId = document.getElementById('planStudentSelect').value;
+      if (!studentId) return;
+      const noteText = document.getElementById('planNoteText').value.trim();
+      const msg = document.getElementById('planMsg');
+ 
+      const { error } = await supabaseClient.from('plan_notes').upsert({
+        mentor_id: currentSession.user.id,
+        student_id: studentId,
+        note: noteText,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'mentor_id,student_id' });
+ 
+      msg.className = 'msg';
+      if (error) {
+        msg.textContent = friendlyError(error);
+        msg.className = 'msg error';
+      } else {
+        msg.textContent = 'توضیحات ذخیره شد.';
+        msg.className = 'msg success';
+      }
     });
  
     async function renderWeekGrid(studentId) {
@@ -662,3 +699,4 @@
  
 </body>
 </html>
+ 
