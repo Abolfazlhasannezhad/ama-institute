@@ -30,7 +30,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Vazirmatn', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
   .mono { font-family: 'JetBrains Mono', monospace; }
-
+ 
   /* ===== نوار بالای صفحه ===== */
   .util-bar {
     background: var(--ink); color: #cdd4dc; font-size: 11.5px; padding: 6px 26px;
@@ -45,8 +45,9 @@
   .profile-chip:hover { background: rgba(255,255,255,0.15); }
   .profile-chip .avatar {
     width: 20px; height: 20px; border-radius: 50%; background: var(--orange); color: #fff; font-size: 10px; font-weight: 800;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden;
   }
+  .profile-chip .avatar img { width: 100%; height: 100%; object-fit: cover; }
   .profile-modal-overlay {
     display: none; position: fixed; inset: 0; background: rgba(20,30,45,0.55); z-index: 100;
     align-items: center; justify-content: center; padding: 20px;
@@ -54,7 +55,6 @@
   .profile-modal-overlay.show { display: flex; }
   .profile-modal { background: #fff; border-radius: 16px; padding: 26px; max-width: 340px; width: 100%; box-shadow: var(--shadow-lg); }
   .profile-modal-head { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
-  .avatar-lg { width: 52px; height: 52px; border-radius: 50%; background: var(--orange); color: #fff; font-size: 20px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .pm-name { font-weight: 800; font-size: 15.5px; }
   .pm-role { font-size: 11.5px; color: var(--ink-soft); margin-top: 2px; }
   .pm-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
@@ -62,7 +62,10 @@
   .pm-val { font-weight: 700; }
   .pm-close { width: 100%; margin-top: 18px; padding: 11px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); font-family: inherit; font-weight: 700; font-size: 13px; cursor: pointer; color: var(--ink); }
   .pm-close:hover { background: var(--ink); color: #fff; }
-
+  .msg { margin-top: 10px; font-size: 12.5px; border-radius: 8px; padding: 9px 11px; display: none; }
+  .msg.error { display: block; background: #fdeceb; color: var(--bad); border: 1px solid rgba(214,75,58,0.3); }
+  .msg.success { display: block; background: rgba(31,157,99,0.08); color: var(--good); border: 1px solid rgba(31,157,99,0.3); }
+ 
   /* ===== هدر اصلی ===== */
   .main-header {
     background: var(--card); border-bottom: 1px solid var(--line); padding: 14px 26px;
@@ -78,14 +81,14 @@
   .logo-fallback { width: 100%; height: 100%; display: none; align-items: center; justify-content: center; background: var(--orange); color: #fff; font-weight: 900; font-size: 18px; }
   .brand .school { font-weight: 800; font-size: 15px; }
   .brand .panel-name { font-size: 11px; color: var(--ink-soft); }
-
+ 
   .search-box {
     flex: 1; max-width: 420px; display: flex; align-items: center; gap: 8px;
     background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 9px 14px;
   }
   .search-box svg { width: 16px; height: 16px; color: var(--ink-soft); flex-shrink: 0; }
   .search-box input { border: none; background: transparent; outline: none; font-family: inherit; font-size: 13px; width: 100%; color: var(--ink); }
-
+ 
   .header-actions { display: flex; align-items: center; gap: 10px; }
   .icon-btn {
     width: 38px; height: 38px; border-radius: 9px; border: 1px solid var(--line); background: #fff;
@@ -98,9 +101,9 @@
     font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer;
   }
   .logout-btn:hover { background: var(--orange-deep); }
-
+ 
   .content { max-width: 1120px; margin: 0 auto; padding: 24px 26px 60px; }
-
+ 
   /* ===== بنر بالا ===== */
   .hero-banner {
     background: #14232f;
@@ -114,6 +117,25 @@
   .hero-text h1 { font-size: 23px; font-weight: 800; margin-bottom: 6px; }
   .hero-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--orange-2, #f2a35c); margin-bottom: 8px; }
   .hero-text .sub { font-size: 12.5px; opacity: 0.75; max-width: 380px; line-height: 1.8; }
+  .hero-profile-row { display: flex; align-items: center; gap: 16px; }
+  .hero-avatar {
+    width: 56px; height: 56px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+    border: 2px solid rgba(255,255,255,0.3); background: var(--orange); display: flex; align-items: center; justify-content: center;
+  }
+  .hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .hero-avatar .letter { font-size: 22px; font-weight: 800; color: #fff; }
+  .upload-avatar-btn {
+    display: inline-flex; align-items: center; gap: 6px; background: var(--bg); border: 1px solid var(--line);
+    border-radius: 9px; padding: 9px 16px; font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; color: var(--ink);
+  }
+  .upload-avatar-btn:hover { border-color: var(--orange); }
+  .upload-avatar-btn svg { width: 15px; height: 15px; }
+  .pm-avatar-lg {
+    width: 52px; height: 52px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+    background: var(--orange); display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 20px; font-weight: 800;
+  }
+  .pm-avatar-lg img { width: 100%; height: 100%; object-fit: cover; }
   .hero-stats { display: flex; gap: 10px; flex-wrap: wrap; }
   .hero-stat-chip {
     background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14); border-radius: 12px;
@@ -123,7 +145,7 @@
   .hero-stat-chip .lbl { font-size: 10px; opacity: 0.7; margin-top: 3px; }
   .hero-stat-chip.accent { background: rgba(239,125,26,0.18); border-color: rgba(239,125,26,0.4); }
   .hero-stat-chip.accent .num { color: #f2a35c; }
-
+ 
   /* ===== شبکهٔ سرویس‌ها ===== */
   .section-label { font-size: 14px; font-weight: 800; margin-bottom: 14px; padding-right: 2px; }
   .service-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-bottom: 30px; }
@@ -143,7 +165,7 @@
   .service-card.t-purple .icon-circle { background: var(--purple-tint); color: var(--purple); }
   .service-card .title { font-weight: 800; font-size: 13.5px; margin-bottom: 3px; }
   .service-card .desc { font-size: 11px; color: var(--ink-soft); line-height: 1.5; }
-
+ 
   /* ===== محتوای بخش‌ها ===== */
   .section-view { display: none; }
   .section-view.active { display: block; }
@@ -157,11 +179,11 @@
   .panel { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 26px; box-shadow: var(--shadow-sm); }
   .panel .desc { color: var(--ink-soft); font-size: 12.5px; margin-bottom: 20px; }
   .empty-state { text-align: center; color: var(--ink-soft); font-size: 13px; padding: 34px 0; }
-
+ 
   table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
   th { text-align: right; color: var(--ink-soft); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; padding: 9px 10px; border-bottom: 2px solid var(--line); }
   td { padding: 11px 10px; border-bottom: 1px solid var(--line); }
-
+ 
   .week-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; }
   .day-col { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 13px; min-height: 150px; }
   .day-col.today { border: 2px solid var(--orange); background: var(--orange-tint); }
@@ -176,13 +198,13 @@
   .log-row { display: flex; gap: 6px; }
   .log-row input { width: 52px; padding: 5px 6px; font-size: 11px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-family: 'JetBrains Mono'; }
   .log-row button { background: var(--ink); border: none; border-radius: 6px; color: #fff; font-size: 11px; padding: 5px 9px; cursor: pointer; font-weight: 700; }
-
+ 
   .exam-card { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 15px 17px; margin-bottom: 11px; display: flex; justify-content: space-between; align-items: center; }
   .exam-card .name { font-weight: 800; font-size: 14px; }
   .exam-card .meta { color: var(--ink-soft); font-size: 11.5px; margin-top: 3px; font-family: 'JetBrains Mono'; }
   .start-btn { background: linear-gradient(95deg, var(--orange), var(--orange-deep)); border: none; color: #fff; padding: 9px 18px; border-radius: 9px; font-family: inherit; font-weight: 700; cursor: pointer; font-size: 12.5px; box-shadow: var(--shadow-sm); }
   .done-pill { color: var(--good); font-size: 12px; font-weight: 800; background: rgba(31,157,99,0.1); padding: 6px 14px; border-radius: 100px; }
-
+ 
   .exam-runner { display: none; }
   .exam-runner.active { display: block; }
   .exam-progress-bar { height: 6px; background: var(--line); border-radius: 100px; overflow: hidden; margin-bottom: 14px; }
@@ -196,32 +218,32 @@
   .q-opt.selected { border-color: var(--orange); background: var(--orange-tint); font-weight: 700; }
   .q-opt input { width: auto; accent-color: var(--orange); }
   .finish-exam-btn { width: 100%; padding: 14px; border-radius: 11px; border: none; background: linear-gradient(95deg, var(--orange), var(--teal)); color: #fff; font-family: inherit; font-size: 14.5px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: var(--shadow-md); }
-
+ 
   .stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 12px; margin-bottom: 22px; }
   .stat-card { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 16px; text-align: center; }
   .stat-card .num { font-family: 'JetBrains Mono'; font-size: 25px; font-weight: 800; color: var(--orange-deep); }
   .stat-card .label { font-size: 10.5px; color: var(--ink-soft); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
   .summary-box { margin-top: 18px; background: var(--teal-tint); border: 1px solid rgba(15,124,140,0.25); border-radius: 11px; padding: 15px; font-size: 13px; color: var(--teal); line-height: 1.85; }
-
+ 
   .notif-item { background: var(--bg); border-right: 4px solid var(--orange); border-radius: 9px; padding: 12px 15px; margin-bottom: 9px; font-size: 13px; display: flex; align-items: center; gap: 10px; }
   .notif-item.warn { border-right-color: var(--bad); background: rgba(214,75,58,0.05); }
   .notif-item svg { width: 17px; height: 17px; flex-shrink: 0; }
 </style>
 </head>
 <body>
-
+ 
   <div class="util-bar">
     <button class="profile-chip" id="profileChip">
-      <span class="avatar" id="profileAvatar">?</span>
+      <span class="avatar" id="profileAvatar"><span class="letter">؟</span></span>
       <span id="profileChipName">در حال بارگذاری...</span>
     </button>
     <div class="right"><a href="#">راهنما</a><a href="#">تماس با پشتیبانی</a></div>
   </div>
-
+ 
   <div class="profile-modal-overlay" id="profileOverlay">
     <div class="profile-modal">
       <div class="profile-modal-head">
-        <span class="avatar-lg" id="profileAvatarLg">?</span>
+        <span class="pm-avatar-lg" id="profileAvatarLg"><span class="letter">؟</span></span>
         <div>
           <div class="pm-name" id="pmName">—</div>
           <div class="pm-role">دانش‌آموز</div>
@@ -230,10 +252,16 @@
       <div class="pm-row"><span class="pm-lbl">نام کاربری</span><span class="pm-val mono" id="pmUsername">—</span></div>
       <div class="pm-row"><span class="pm-lbl">پایهٔ تحصیلی</span><span class="pm-val" id="pmGrade">—</span></div>
       <div class="pm-row"><span class="pm-lbl">شمارهٔ موبایل</span><span class="pm-val mono" id="pmMobile">—</span></div>
+      <input type="file" id="avatarFileInput" accept="image/*" style="display:none;">
+      <button class="upload-avatar-btn" id="uploadAvatarBtn" style="width:100%; justify-content:center; margin-top:14px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+        تغییر عکس پروفایل
+      </button>
+      <div class="msg" id="avatarMsg"></div>
       <button class="pm-close" id="pmCloseBtn">بستن</button>
     </div>
   </div>
-
+ 
   <div class="main-header">
     <div class="brand">
       <div class="logo-badge">
@@ -245,12 +273,12 @@
         <div class="panel-name">پنل دانش‌آموز</div>
       </div>
     </div>
-
+ 
     <div class="search-box">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
       <input type="text" placeholder="جستجو در آزمون‌ها، برنامه و نتایج...">
     </div>
-
+ 
     <div class="header-actions">
       <button class="icon-btn" onclick="goTo('notifs')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
@@ -259,14 +287,19 @@
       <button class="logout-btn" id="logoutBtn">خروج</button>
     </div>
   </div>
-
+ 
   <div class="content">
-
+ 
     <div class="hero-banner">
       <div class="hero-text">
         <div class="hero-eyebrow" id="heroEyebrow">داشبورد دانش‌آموز</div>
-        <h1 id="greetText">سلام 👋</h1>
-        <div class="sub" id="greetSub"></div>
+        <div class="hero-profile-row">
+          <div class="hero-avatar" id="heroAvatar"><span class="letter">؟</span></div>
+          <div>
+            <h1 id="studentFullName">—</h1>
+            <div class="sub" id="studentGradeLine"></div>
+          </div>
+        </div>
       </div>
       <div class="hero-stats">
         <div class="hero-stat-chip accent">
@@ -283,7 +316,7 @@
         </div>
       </div>
     </div>
-
+ 
     <div id="view-home">
       <div class="section-label">دسترسی سریع</div>
       <div class="service-grid">
@@ -292,25 +325,25 @@
           <div class="title">برنامهٔ من</div>
           <div class="desc">کلاس و مطالعهٔ هفته</div>
         </div>
-
+ 
         <div class="service-card t-teal" onclick="goTo('exams')">
           <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h-6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h8l6 6v3"/><path d="M14 4v6h6"/><circle cx="17" cy="17" r="4"/><path d="m22 22-1.5-1.5"/></svg></div>
           <div class="title">آزمون‌ها</div>
           <div class="desc">شرکت در آزمون</div>
         </div>
-
+ 
         <div class="service-card t-gold" onclick="goTo('results')">
           <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4a2 2 0 0 0 2 4M17 6h3a2 2 0 0 1-2 4"/></svg></div>
           <div class="title">نتایج</div>
           <div class="desc">نمرات آزمون‌ها</div>
         </div>
-
+ 
         <div class="service-card t-purple" onclick="goTo('progress')">
           <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-5 3 3 5-7"/></svg></div>
           <div class="title">روند پیشرفت</div>
           <div class="desc">تحلیل و نمودار</div>
         </div>
-
+ 
         <div class="service-card t-orange" onclick="goTo('notifs')">
           <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></div>
           <div class="title">اطلاعیه‌ها</div>
@@ -318,7 +351,7 @@
         </div>
       </div>
     </div>
-
+ 
     <div class="section-view" id="section-plan">
       <div class="back-row"><button class="back-btn" onclick="goHome()">→ بازگشت</button><span class="section-title">برنامهٔ هفتگی</span></div>
       <div class="panel">
@@ -326,7 +359,7 @@
         <div id="weekGrid" class="week-grid"></div>
       </div>
     </div>
-
+ 
     <div class="section-view" id="section-exams">
       <div class="back-row"><button class="back-btn" onclick="goHome()">→ بازگشت</button><span class="section-title">آزمون‌ها</span></div>
       <div class="panel">
@@ -342,7 +375,7 @@
         </div>
       </div>
     </div>
-
+ 
     <div class="section-view" id="section-results">
       <div class="back-row"><button class="back-btn" onclick="goHome()">→ بازگشت</button><span class="section-title">نتایج آزمون‌ها</span></div>
       <div class="panel">
@@ -356,7 +389,7 @@
         <div id="resultsWrap"><div class="empty-state">در حال بارگذاری...</div></div>
       </div>
     </div>
-
+ 
     <div class="section-view" id="section-progress">
       <div class="back-row"><button class="back-btn" onclick="goHome()">→ بازگشت</button><span class="section-title">روند کلی پیشرفت</span></div>
       <div class="panel">
@@ -365,16 +398,16 @@
         <div class="summary-box" id="progressSummary"></div>
       </div>
     </div>
-
+ 
     <div class="section-view" id="section-notifs">
       <div class="back-row"><button class="back-btn" onclick="goHome()">→ بازگشت</button><span class="section-title">اطلاعیه‌ها</span></div>
       <div class="panel">
         <div id="notifWrap"><div class="empty-state">در حال بارگذاری...</div></div>
       </div>
     </div>
-
+ 
   </div>
-
+ 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   <script src="config.js"></script>
@@ -382,16 +415,16 @@
     let currentSession = null;
     let currentProfile = null;
     const dayNames = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'];
-
+ 
     let activeExam = null;
     let activeQuestions = [];
     let questionStartTime = null;
     let examTimerInterval = null;
     let examEndTimestamp = null;
     let studentAnswersBuffer = {};
-
+ 
     function jsDayToOurDay(jsDay) { return jsDay === 6 ? 1 : jsDay + 2; }
-
+ 
     window.goTo = function (section) {
       document.getElementById('view-home').style.display = 'none';
       document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
@@ -403,38 +436,93 @@
       document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
       document.getElementById('view-home').style.display = 'block';
     };
-
+ 
     async function init() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (!session) { window.location.href = 'index.html'; return; }
       currentSession = session;
-
+ 
       const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', session.user.id).single();
       if (!profile || profile.role !== 'student') { window.location.href = 'dashboard.html'; return; }
       currentProfile = profile;
-
-      document.getElementById('greetText').textContent = `سلام ${profile.first_name} 👋`;
-      const hour = new Date().getHours();
-      const timeGreet = hour < 12 ? 'صبح بخیر' : hour < 18 ? 'روز بخیر' : 'عصر بخیر';
-      document.getElementById('greetSub').textContent = `${timeGreet}! بریم ببینیم امروز چه برنامه‌ای داری.`;
+ 
       document.getElementById('heroEyebrow').textContent = new Date().toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long' });
-
-      const initial = (profile.first_name || '؟').charAt(0);
-      document.getElementById('profileAvatar').textContent = initial;
-      document.getElementById('profileAvatarLg').textContent = initial;
+      document.getElementById('studentFullName').textContent = `${profile.first_name} ${profile.last_name}`;
+      document.getElementById('studentGradeLine').textContent = profile.grade || 'دانش‌آموز آما';
+ 
+      renderAvatarEverywhere(profile);
       document.getElementById('profileChipName').textContent = `${profile.first_name} ${profile.last_name}`;
       document.getElementById('pmName').textContent = `${profile.first_name} ${profile.last_name}`;
       document.getElementById('pmUsername').textContent = profile.username || '—';
       document.getElementById('pmGrade').textContent = profile.grade || '—';
       document.getElementById('pmMobile').textContent = profile.mobile || '—';
-
+ 
       loadWeekPlan();
       loadExams();
       loadNotifications();
       loadStreak();
       loadHeroStats();
     }
-
+ 
+    function renderAvatarEverywhere(profile) {
+      const initial = (profile.first_name || '؟').charAt(0);
+      const spots = [
+        { id: 'profileAvatar', size: 'small' },
+        { id: 'profileAvatarLg', size: 'large' },
+        { id: 'heroAvatar', size: 'large' },
+      ];
+      spots.forEach(spot => {
+        const el = document.getElementById(spot.id);
+        if (profile.avatar_url) {
+          el.innerHTML = `<img src="${profile.avatar_url}" alt="عکس پروفایل">`;
+        } else {
+          el.innerHTML = `<span class="letter">${initial}</span>`;
+        }
+      });
+    }
+ 
+    document.getElementById('uploadAvatarBtn').addEventListener('click', () => {
+      document.getElementById('avatarFileInput').click();
+    });
+ 
+    document.getElementById('avatarFileInput').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const msg = document.getElementById('avatarMsg');
+      msg.className = 'msg';
+ 
+      if (file.size > 2 * 1024 * 1024) {
+        msg.textContent = 'حجم عکس نباید بیشتر از ۲ مگابایت باشد.';
+        msg.className = 'msg error';
+        return;
+      }
+ 
+      const ext = file.name.split('.').pop();
+      const filePath = `${currentSession.user.id}/avatar.${ext}`;
+ 
+      const { error: uploadError } = await supabaseClient.storage.from('avatars').upload(filePath, file, { upsert: true });
+      if (uploadError) {
+        msg.textContent = friendlyError(uploadError);
+        msg.className = 'msg error';
+        return;
+      }
+ 
+      const { data: urlData } = supabaseClient.storage.from('avatars').getPublicUrl(filePath);
+      const publicUrl = urlData.publicUrl + '?t=' + Date.now();
+ 
+      const { error: updateError } = await supabaseClient.from('profiles').update({ avatar_url: publicUrl }).eq('id', currentSession.user.id);
+      if (updateError) {
+        msg.textContent = friendlyError(updateError);
+        msg.className = 'msg error';
+        return;
+      }
+ 
+      currentProfile.avatar_url = publicUrl;
+      renderAvatarEverywhere(currentProfile);
+      msg.textContent = 'عکس پروفایل با موفقیت به‌روزرسانی شد.';
+      msg.className = 'msg success';
+    });
+ 
     async function loadHeroStats() {
       const { data: logs } = await supabaseClient.from('study_logs').select('study_hours, test_count').eq('student_id', currentSession.user.id);
       const totalHours = (logs || []).reduce((s, l) => s + (l.study_hours || 0), 0);
@@ -442,7 +530,7 @@
       document.getElementById('totalHoursNum').textContent = totalHours;
       document.getElementById('totalTestsNum').textContent = totalTests;
     }
-
+ 
     document.getElementById('profileChip').addEventListener('click', () => {
       document.getElementById('profileOverlay').classList.add('show');
     });
@@ -452,16 +540,16 @@
     document.getElementById('profileOverlay').addEventListener('click', (e) => {
       if (e.target.id === 'profileOverlay') document.getElementById('profileOverlay').classList.remove('show');
     });
-
+ 
     async function loadWeekPlan() {
       const grid = document.getElementById('weekGrid');
       const sid = currentSession.user.id;
       const todayOurDay = jsDayToOurDay(new Date().getDay());
-
+ 
       const { data: classItems } = await supabaseClient.from('class_schedule').select('*').eq('student_id', sid);
       const { data: planItems } = await supabaseClient.from('study_plan_items').select('*').eq('student_id', sid).order('order_index');
       const { data: logs } = await supabaseClient.from('study_logs').select('*').eq('student_id', sid).eq('log_date', new Date().toISOString().slice(0,10));
-
+ 
       grid.innerHTML = '';
       for (let day = 1; day <= 7; day++) {
         const dayClasses = (classItems || []).filter(c => c.day_of_week === day);
@@ -488,25 +576,32 @@
         grid.appendChild(col);
       }
     }
-
+ 
     window.saveLog = async function (planItemId) {
       const hours = parseFloat(document.getElementById('hrs-' + planItemId).value) || 0;
       const tests = parseInt(document.getElementById('tst-' + planItemId).value) || 0;
       const today = new Date().toISOString().slice(0,10);
-      const { data: existing } = await supabaseClient.from('study_logs').select('id').eq('student_id', currentSession.user.id).eq('plan_item_id', planItemId).eq('log_date', today).maybeSingle();
-      if (existing) await supabaseClient.from('study_logs').update({ study_hours: hours, test_count: tests }).eq('id', existing.id);
-      else await supabaseClient.from('study_logs').insert({ student_id: currentSession.user.id, plan_item_id: planItemId, study_hours: hours, test_count: tests, log_date: today });
+      await supabaseClient.from('study_logs').upsert({
+        student_id: currentSession.user.id,
+        plan_item_id: planItemId,
+        study_hours: hours,
+        test_count: tests,
+        log_date: today,
+      }, { onConflict: 'student_id,plan_item_id,log_date' });
       loadWeekPlan(); loadStreak(); loadHeroStats();
     };
-
+ 
     window.toggleComplete = async function (planItemId, isChecked) {
       const today = new Date().toISOString().slice(0,10);
-      const { data: existing } = await supabaseClient.from('study_logs').select('id').eq('student_id', currentSession.user.id).eq('plan_item_id', planItemId).eq('log_date', today).maybeSingle();
-      if (existing) await supabaseClient.from('study_logs').update({ is_completed: isChecked }).eq('id', existing.id);
-      else await supabaseClient.from('study_logs').insert({ student_id: currentSession.user.id, plan_item_id: planItemId, is_completed: isChecked, log_date: today });
+      await supabaseClient.from('study_logs').upsert({
+        student_id: currentSession.user.id,
+        plan_item_id: planItemId,
+        is_completed: isChecked,
+        log_date: today,
+      }, { onConflict: 'student_id,plan_item_id,log_date' });
       loadWeekPlan(); loadStreak(); loadNotifications(); loadHeroStats();
     };
-
+ 
     async function loadStreak() {
       const { data: logs } = await supabaseClient.from('study_logs').select('log_date, is_completed').eq('student_id', currentSession.user.id).eq('is_completed', true).order('log_date', { ascending: false });
       if (!logs || logs.length === 0) { document.getElementById('streakNum').textContent = '۰'; return; }
@@ -518,30 +613,59 @@
       }
       document.getElementById('streakNum').textContent = streak;
     }
-
+ 
     async function loadExams() {
       const wrap = document.getElementById('examListWrap');
       const { data: participations } = await supabaseClient.from('exam_participants').select('*').eq('student_id', currentSession.user.id);
       const pendingCount = (participations || []).filter(p => !p.submitted_at).length;
       if (pendingCount > 0) { document.getElementById('headerNotifDot').style.display = 'block'; }
-
+ 
       if (!participations || participations.length === 0) { wrap.innerHTML = '<div class="empty-state">آزمونی برای شما تعریف نشده است</div>'; return; }
       const examIds = participations.map(p => p.exam_id);
       const { data: exams } = await supabaseClient.from('exams').select('*').in('id', examIds);
-
+ 
+      const now = new Date();
+ 
       wrap.innerHTML = (exams || []).map(ex => {
         const part = participations.find(p => p.exam_id === ex.id);
         const finished = !!part.submitted_at;
+        const startAt = ex.start_at ? new Date(ex.start_at) : null;
+        const endAt = ex.end_at ? new Date(ex.end_at) : null;
+ 
+        let actionHtml;
+        if (finished) {
+          actionHtml = '<span class="done-pill">انجام‌شده</span>';
+        } else if (startAt && now < startAt) {
+          actionHtml = `<span class="done-pill" style="color:var(--ink-soft); background:var(--bg);">از ${startAt.toLocaleString('fa-IR')} در دسترس</span>`;
+        } else if (endAt && now > endAt) {
+          actionHtml = `<span class="done-pill" style="color:var(--bad); background:rgba(214,75,58,0.08);">زمان آزمون به پایان رسیده</span>`;
+        } else {
+          actionHtml = `<button class="start-btn" onclick="startExam('${ex.id}')">شروع آزمون</button>`;
+        }
+ 
         return `
           <div class="exam-card">
             <div><div class="name">${ex.title}</div><div class="meta">${ex.duration_minutes} دقیقه — ${ex.creator_role === 'mentor' ? 'مشاور' : 'دبیر'}</div></div>
-            ${finished ? '<span class="done-pill">انجام‌شده</span>' : `<button class="start-btn" onclick="startExam('${ex.id}')">شروع آزمون</button>`}
+            ${actionHtml}
           </div>`;
       }).join('');
     }
-
+ 
     window.startExam = async function (examId) {
       const { data: exam } = await supabaseClient.from('exams').select('*').eq('id', examId).single();
+ 
+      // بررسی دوبارهٔ بازهٔ زمانی، برای اطمینان (حتی اگه دکمه رو دستکاری کرده باشن)
+      const now = new Date();
+      if (exam.start_at && now < new Date(exam.start_at)) {
+        alert('این آزمون هنوز شروع نشده است.');
+        return;
+      }
+      if (exam.end_at && now > new Date(exam.end_at)) {
+        alert('زمان مجاز شرکت در این آزمون به پایان رسیده است.');
+        loadExams();
+        return;
+      }
+ 
       const { data: examQuestions } = await supabaseClient.from('exam_questions').select('*, questions(*)').eq('exam_id', examId).order('order_index');
       if (!examQuestions || examQuestions.length === 0) { alert('این آزمون هنوز سؤالی ندارد.'); return; }
       activeExam = exam; activeQuestions = examQuestions; studentAnswersBuffer = {};
@@ -551,7 +675,7 @@
       renderQuestions();
       startExamTimer(exam.duration_minutes);
     };
-
+ 
     function renderQuestions() {
       const wrap = document.getElementById('questionsWrap');
       wrap.innerHTML = activeQuestions.map((eq, idx) => {
@@ -569,12 +693,12 @@
       questionStartTime = Date.now();
       updateExamProgress();
     }
-
+ 
     function updateExamProgress() {
       const answered = Object.keys(studentAnswersBuffer).length;
       document.getElementById('examProgressFill').style.width = Math.round((answered / activeQuestions.length) * 100) + '%';
     }
-
+ 
     window.recordAnswer = function (questionId, selected) {
       const now = Date.now();
       const prevTime = studentAnswersBuffer[questionId]?.firstSeen || questionStartTime;
@@ -585,7 +709,7 @@
       block.querySelector(`.q-opt[data-opt="${selected}"]`).classList.add('selected');
       updateExamProgress();
     };
-
+ 
     function startExamTimer(durationMinutes) {
       examEndTimestamp = Date.now() + durationMinutes * 60 * 1000;
       updateTimerDisplay();
@@ -600,11 +724,11 @@
       const mins = Math.floor(remain / 60000), secs = Math.floor((remain % 60000) / 1000);
       document.getElementById('examTimer').textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
     }
-
+ 
     document.getElementById('finishExamBtn').addEventListener('click', () => {
       if (confirm('آیا مطمئنید می‌خواهید آزمون را پایان دهید؟')) { clearInterval(examTimerInterval); submitExam(); }
     });
-
+ 
     async function submitExam() {
       let correctCount = 0;
       for (const eq of activeQuestions) {
@@ -617,32 +741,46 @@
       const scorePercent = Math.round((correctCount / activeQuestions.length) * 100);
       await supabaseClient.from('exam_results').insert({ exam_id: activeExam.id, student_id: currentSession.user.id, score: scorePercent });
       await supabaseClient.from('exam_participants').update({ submitted_at: new Date().toISOString() }).eq('exam_id', activeExam.id).eq('student_id', currentSession.user.id);
-      alert(`آزمون ثبت شد. نمرهٔ شما: ${scorePercent} از ۱۰۰`);
+ 
+      const resultHidden = activeExam.end_at && new Date() < new Date(activeExam.end_at);
+      if (resultHidden) {
+        alert('آزمون با موفقیت ثبت شد. نتیجه پس از پایان زمان آزمون اعلام می‌شود.');
+      } else {
+        alert(`آزمون ثبت شد. نمرهٔ شما: ${scorePercent} از ۱۰۰`);
+      }
+ 
       document.getElementById('examRunnerSection').classList.remove('active');
       document.getElementById('examListSection').style.display = 'block';
       activeExam = null;
       loadExams(); loadNotifications();
     }
-
+ 
     document.getElementById('resultsFilter').addEventListener('change', loadResults);
     async function loadResults() {
       const wrap = document.getElementById('resultsWrap');
       const filter = document.getElementById('resultsFilter').value;
-      const { data: results } = await supabaseClient.from('exam_results').select('*, exams(title, creator_role)').eq('student_id', currentSession.user.id);
+      const { data: results } = await supabaseClient.from('exam_results').select('*, exams(title, creator_role, end_at)').eq('student_id', currentSession.user.id);
       if (!results || results.length === 0) { wrap.innerHTML = '<div class="empty-state">هنوز نتیجه‌ای ثبت نشده است</div>'; return; }
       const filtered = results.filter(r => filter === 'all' || r.exams?.creator_role === filter);
       if (filtered.length === 0) { wrap.innerHTML = '<div class="empty-state">نتیجه‌ای در این دسته وجود ندارد</div>'; return; }
       wrap.innerHTML = '<table><thead><tr><th>آزمون</th><th>سازنده</th><th>نمره</th></tr></thead><tbody>' +
-        filtered.map(r => `<tr><td>${r.exams?.title || '—'}</td><td>${r.exams?.creator_role === 'mentor' ? 'مشاور' : 'دبیر'}</td><td class="mono">${r.score}</td></tr>`).join('') + '</tbody></table>';
+        filtered.map(r => {
+          const hidden = r.exams?.end_at && new Date() < new Date(r.exams.end_at);
+          const scoreCell = hidden ? '<span style="color:var(--ink-soft); font-size:12px;">بعد از پایان زمان آزمون</span>' : `<span class="mono">${r.score}</span>`;
+          return `<tr><td>${r.exams?.title || '—'}</td><td>${r.exams?.creator_role === 'mentor' ? 'مشاور' : 'دبیر'}</td><td>${scoreCell}</td></tr>`;
+        }).join('') + '</tbody></table>';
     }
-
+ 
     async function loadProgress() {
-      const { data: results } = await supabaseClient.from('exam_results').select('score, created_at').eq('student_id', currentSession.user.id).order('created_at');
+      const { data: rawResults } = await supabaseClient.from('exam_results').select('score, created_at, exams(end_at)').eq('student_id', currentSession.user.id).order('created_at');
+      const now = new Date();
+      const results = (rawResults || []).filter(r => !(r.exams?.end_at && now < new Date(r.exams.end_at)));
+ 
       const { data: logs } = await supabaseClient.from('study_logs').select('study_hours, test_count').eq('student_id', currentSession.user.id);
       const totalHours = (logs || []).reduce((s, l) => s + (l.study_hours || 0), 0);
       const totalTests = (logs || []).reduce((s, l) => s + (l.test_count || 0), 0);
       const avgScore = results && results.length > 0 ? Math.round(results.reduce((s, r) => s + (r.score || 0), 0) / results.length) : 0;
-
+ 
       document.getElementById('statCards').innerHTML = `
         <div class="stat-card"><div class="num mono">${avgScore}</div><div class="label">میانگین نمره</div></div>
         <div class="stat-card"><div class="num mono">${totalHours}</div><div class="label">ساعت مطالعه</div></div>
@@ -658,7 +796,7 @@
         avgScore >= 70 ? 'روند کلی‌ات مثبت و رو به رشده.' + trend
         : avgScore > 0 ? 'با تمرین بیشتر می‌تونی نتایج بهتری بگیری.' + trend
         : 'هنوز داده‌ای برای تحلیل روند وجود نداره.';
-
+ 
       if (results && results.length > 0) {
         new Chart(document.getElementById('progressChart'), {
           type: 'line',
@@ -667,15 +805,15 @@
         });
       }
     }
-
+ 
     async function loadNotifications() {
       const wrap = document.getElementById('notifWrap');
       const sid = currentSession.user.id;
       const notifs = [];
-
+ 
       const { data: participations } = await supabaseClient.from('exam_participants').select('*, exams(*)').eq('student_id', sid).is('submitted_at', null);
       (participations || []).forEach(p => { if (p.exams) notifs.push({ warn: false, text: `آزمون «${p.exams.title}» هنوز انجام نشده است.` }); });
-
+ 
       const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
       const yStr = yesterday.toISOString().slice(0,10);
       const yesterdayOurDay = jsDayToOurDay(yesterday.getDay());
@@ -685,22 +823,24 @@
         const log = (yLogs || []).find(l => l.plan_item_id === p.id);
         if (!log || !log.is_completed) notifs.push({ warn: true, text: `پارت «${p.part_title}» مربوط به دیروز هنوز تکمیل نشده است.` });
       });
-
+ 
       if (notifs.length > 0) { document.getElementById('headerNotifDot').style.display = 'block'; }
-
+ 
       const bellIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>';
       wrap.innerHTML = notifs.length === 0
         ? '<div class="empty-state">اطلاعیه‌ای وجود ندارد — همه‌چیز مرتبه.</div>'
         : notifs.map(n => `<div class="notif-item ${n.warn ? 'warn' : ''}">${bellIcon}<span>${n.text}</span></div>`).join('');
     }
-
+ 
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await supabaseClient.auth.signOut();
       window.location.href = 'index.html';
     });
-
+ 
     init();
   </script>
-
+ 
+  <div style="text-align:center; padding:22px 12px; font-size:11.5px; color:#93a09d; font-family:Vazirmatn,sans-serif;">توسعه‌یافته توسط ابوالفضل حسن‌نژاد — تلگرام: <a href="https://t.me/abolfazl9195" target="_blank" style="color:#ef7d1a; text-decoration:none;">@abolfazl9195</a></div>
 </body>
 </html>
+ 
