@@ -357,6 +357,10 @@
       <div class="panel">
         <p class="desc">ساعات کلاس (آبی) و پارت‌های مطالعاتی مشاور — بعد از مطالعه، ساعت و تعداد تست را ثبت و تیک بزنید</p>
         <div id="weekGrid" class="week-grid"></div>
+        <div id="planNoteBox" style="display:none; margin-top:18px; background:var(--teal-tint); border:1px solid rgba(15,124,140,0.25); border-radius:11px; padding:15px; font-size:13px; color:var(--teal); line-height:1.85;">
+          <div style="font-weight:800; font-size:12.5px; margin-bottom:6px;">توضیح مشاور دربارهٔ این برنامه</div>
+          <div id="planNoteContent"></div>
+        </div>
       </div>
     </div>
  
@@ -541,6 +545,18 @@
       if (e.target.id === 'profileOverlay') document.getElementById('profileOverlay').classList.remove('show');
     });
  
+    async function loadPlanNote(studentId) {
+      const { data: notes } = await supabaseClient.from('plan_notes').select('note').eq('student_id', studentId);
+      const box = document.getElementById('planNoteBox');
+      const nonEmpty = (notes || []).filter(n => n.note && n.note.trim());
+      if (nonEmpty.length === 0) {
+        box.style.display = 'none';
+        return;
+      }
+      document.getElementById('planNoteContent').innerHTML = nonEmpty.map(n => `<p style="margin-bottom:8px;">${n.note}</p>`).join('');
+      box.style.display = 'block';
+    }
+ 
     async function loadWeekPlan() {
       const grid = document.getElementById('weekGrid');
       const sid = currentSession.user.id;
@@ -550,6 +566,7 @@
       const { data: planItems } = await supabaseClient.from('study_plan_items').select('*').eq('student_id', sid).order('order_index');
       const { data: logs } = await supabaseClient.from('study_logs').select('*').eq('student_id', sid).eq('log_date', new Date().toISOString().slice(0,10));
  
+      loadPlanNote(sid);
       grid.innerHTML = '';
       for (let day = 1; day <= 7; day++) {
         const dayClasses = (classItems || []).filter(c => c.day_of_week === day);
