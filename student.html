@@ -184,20 +184,43 @@
   th { text-align: right; color: var(--ink-soft); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; padding: 9px 10px; border-bottom: 2px solid var(--line); }
   td { padding: 11px 10px; border-bottom: 1px solid var(--line); }
  
-  .week-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; }
-  .day-col { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 13px; min-height: 150px; }
-  .day-col.today { border: 2px solid var(--orange); background: var(--orange-tint); }
-  .day-col h4 { font-size: 12.5px; font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-  .today-pill { background: var(--orange); color: #fff; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 100px; }
-  .class-item { background: var(--teal-tint); border: 1px solid rgba(15,124,140,0.25); border-radius: 7px; padding: 6px 8px; font-size: 11px; margin-bottom: 6px; color: var(--teal); font-family: 'JetBrains Mono'; }
-  .part-item { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 9px; font-size: 12.5px; margin-bottom: 7px; box-shadow: var(--shadow-sm); }
-  .part-item.done { background: rgba(31,157,99,0.06); border-color: rgba(31,157,99,0.3); }
+  .week-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: 14px; }
+  .day-col {
+    background: var(--bg); border: 1px solid var(--line); border-radius: 14px; padding: 15px;
+    min-height: 160px; transition: box-shadow 0.15s ease;
+  }
+  .day-col:hover { box-shadow: var(--shadow-sm); }
+  .day-col.today { border: 2px solid var(--orange); background: linear-gradient(180deg, var(--orange-tint), #fff 60%); box-shadow: 0 6px 18px -8px rgba(239,125,26,0.35); }
+  .day-col h4 {
+    font-size: 12.5px; font-weight: 800; margin-bottom: 12px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--line); display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;
+  }
+  .day-col h4 .day-date { font-size: 10.5px; font-weight: 500; color: var(--ink-soft); font-family: 'JetBrains Mono'; }
+  .today-pill { background: var(--orange); color: #fff; font-size: 9px; font-weight: 800; padding: 2px 8px; border-radius: 100px; margin-right: auto; }
+  .class-item {
+    background: var(--teal-tint); border: 1px solid rgba(15,124,140,0.25); border-radius: 8px;
+    padding: 7px 9px; font-size: 11px; margin-bottom: 7px; color: var(--teal); font-family: 'JetBrains Mono'; font-weight: 700;
+  }
+  .part-item {
+    background: #fff; border: 1px solid var(--line); border-radius: 11px; padding: 10px; font-size: 12.5px;
+    margin-bottom: 8px; box-shadow: var(--shadow-sm); transition: border-color 0.15s ease;
+  }
+  .part-item:hover { border-color: rgba(239,125,26,0.4); }
+  .part-item.done { background: rgba(31,157,99,0.06); border-color: rgba(31,157,99,0.35); }
   .part-item.done .top-row span { text-decoration: line-through; color: var(--ink-soft); }
-  .part-item .top-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
-  .part-item input[type="checkbox"] { width: auto; accent-color: var(--good); }
+  .part-item .top-row { display: flex; align-items: flex-start; gap: 7px; margin-bottom: 8px; line-height: 1.5; }
+  .part-item input[type="checkbox"] { width: 15px; height: 15px; margin-top: 2px; accent-color: var(--good); flex-shrink: 0; cursor: pointer; }
   .log-row { display: flex; gap: 6px; }
-  .log-row input { width: 52px; padding: 5px 6px; font-size: 11px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-family: 'JetBrains Mono'; }
-  .log-row button { background: var(--ink); border: none; border-radius: 6px; color: #fff; font-size: 11px; padding: 5px 9px; cursor: pointer; font-weight: 700; }
+  .log-row input {
+    width: 100%; min-width: 0; padding: 6px 7px; font-size: 11px; border-radius: 7px;
+    border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-family: 'JetBrains Mono'; text-align: center;
+  }
+  .log-row input:focus { outline: none; border-color: var(--orange); background: #fff; }
+  .log-row button {
+    background: var(--ink); border: none; border-radius: 7px; color: #fff; font-size: 11px;
+    padding: 6px 12px; cursor: pointer; font-weight: 700; flex-shrink: 0; transition: background 0.15s ease;
+  }
+  .log-row button:hover { background: var(--orange-deep); }
  
   .exam-card { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 15px 17px; margin-bottom: 11px; display: flex; justify-content: space-between; align-items: center; }
   .exam-card .name { font-weight: 800; font-size: 14px; }
@@ -557,35 +580,53 @@
       box.style.display = 'block';
     }
  
+    function getWeekDates() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const todayOurDay = jsDayToOurDay(today.getDay());
+      const saturday = new Date(today);
+      saturday.setDate(today.getDate() - (todayOurDay - 1));
+      const dates = {};
+      for (let d = 1; d <= 7; d++) {
+        const dt = new Date(saturday);
+        dt.setDate(saturday.getDate() + (d - 1));
+        dates[d] = dt.toISOString().slice(0, 10);
+      }
+      return dates;
+    }
+ 
     async function loadWeekPlan() {
       const grid = document.getElementById('weekGrid');
       const sid = currentSession.user.id;
       const todayOurDay = jsDayToOurDay(new Date().getDay());
+      const weekDates = getWeekDates();
  
       const { data: classItems } = await supabaseClient.from('class_schedule').select('*').eq('student_id', sid);
       const { data: planItems } = await supabaseClient.from('study_plan_items').select('*').eq('student_id', sid).order('order_index');
-      const { data: logs } = await supabaseClient.from('study_logs').select('*').eq('student_id', sid).eq('log_date', new Date().toISOString().slice(0,10));
+      const { data: logs } = await supabaseClient.from('study_logs').select('*').eq('student_id', sid).gte('log_date', weekDates[1]).lte('log_date', weekDates[7]);
  
       loadPlanNote(sid);
       grid.innerHTML = '';
       for (let day = 1; day <= 7; day++) {
+        const dayDate = weekDates[day];
         const dayClasses = (classItems || []).filter(c => c.day_of_week === day);
         const dayParts = (planItems || []).filter(p => p.day_of_week === day);
         const col = document.createElement('div');
         col.className = 'day-col' + (day === todayOurDay ? ' today' : '');
-        let html = `<h4>${dayNames[day-1]} ${day === todayOurDay ? '<span class="today-pill">امروز</span>' : ''}</h4>`;
+        const dateLabel = new Date(dayDate).toLocaleDateString('fa-IR', { day: 'numeric', month: 'short' });
+        let html = `<h4><span>${dayNames[day-1]}</span><span class="day-date">${dateLabel}</span>${day === todayOurDay ? '<span class="today-pill">امروز</span>' : ''}</h4>`;
         dayClasses.forEach(c => { html += `<div class="class-item">${c.start_time?.slice(0,5)}–${c.end_time?.slice(0,5)} ${c.subject || ''}</div>`; });
-        if (dayParts.length === 0 && dayClasses.length === 0) html += `<div style="color:var(--ink-soft); font-size:11px; text-align:center; padding:10px 0;">برنامه‌ای ثبت نشده</div>`;
+        if (dayParts.length === 0 && dayClasses.length === 0) html += `<div style="color:var(--ink-soft); font-size:11px; text-align:center; padding:14px 0;">برنامه‌ای ثبت نشده</div>`;
         dayParts.forEach(p => {
-          const existingLog = (logs || []).find(l => l.plan_item_id === p.id);
+          const existingLog = (logs || []).find(l => l.plan_item_id === p.id && l.log_date === dayDate);
           const done = existingLog?.is_completed;
           html += `
             <div class="part-item ${done ? 'done' : ''}" data-plan-id="${p.id}">
-              <div class="top-row"><input type="checkbox" ${done ? 'checked' : ''} onchange="toggleComplete('${p.id}', this.checked)"><span>${p.part_title}</span></div>
+              <div class="top-row"><input type="checkbox" ${done ? 'checked' : ''} onchange="toggleComplete('${p.id}', this.checked, '${dayDate}')"><span>${p.part_title}</span></div>
               <div class="log-row">
-                <input type="number" placeholder="ساعت" id="hrs-${p.id}" value="${existingLog?.study_hours || ''}" step="0.5">
-                <input type="number" placeholder="تست" id="tst-${p.id}" value="${existingLog?.test_count || ''}">
-                <button onclick="saveLog('${p.id}')">ثبت</button>
+                <input type="number" placeholder="ساعت" id="hrs-${p.id}-${dayDate}" value="${existingLog?.study_hours || ''}" step="0.5">
+                <input type="number" placeholder="تست" id="tst-${p.id}-${dayDate}" value="${existingLog?.test_count || ''}">
+                <button onclick="saveLog('${p.id}', '${dayDate}')">ثبت</button>
               </div>
             </div>`;
         });
@@ -594,27 +635,25 @@
       }
     }
  
-    window.saveLog = async function (planItemId) {
-      const hours = parseFloat(document.getElementById('hrs-' + planItemId).value) || 0;
-      const tests = parseInt(document.getElementById('tst-' + planItemId).value) || 0;
-      const today = new Date().toISOString().slice(0,10);
+    window.saveLog = async function (planItemId, logDate) {
+      const hours = parseFloat(document.getElementById(`hrs-${planItemId}-${logDate}`).value) || 0;
+      const tests = parseInt(document.getElementById(`tst-${planItemId}-${logDate}`).value) || 0;
       await supabaseClient.from('study_logs').upsert({
         student_id: currentSession.user.id,
         plan_item_id: planItemId,
         study_hours: hours,
         test_count: tests,
-        log_date: today,
+        log_date: logDate,
       }, { onConflict: 'student_id,plan_item_id,log_date' });
       loadWeekPlan(); loadStreak(); loadHeroStats();
     };
  
-    window.toggleComplete = async function (planItemId, isChecked) {
-      const today = new Date().toISOString().slice(0,10);
+    window.toggleComplete = async function (planItemId, isChecked, logDate) {
       await supabaseClient.from('study_logs').upsert({
         student_id: currentSession.user.id,
         plan_item_id: planItemId,
         is_completed: isChecked,
-        log_date: today,
+        log_date: logDate,
       }, { onConflict: 'student_id,plan_item_id,log_date' });
       loadWeekPlan(); loadStreak(); loadNotifications(); loadHeroStats();
     };
