@@ -177,6 +177,52 @@
   .back-btn:hover { border-color: var(--orange); color: var(--orange-deep); }
   .section-title { font-size: 19px; font-weight: 900; }
   .panel { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 26px; box-shadow: var(--shadow-sm); }
+ 
+  .plan-panel-branded {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-sm), inset 0 0 0 1px rgba(239,125,26,0.08);
+    background: linear-gradient(180deg, #fffefb 0%, var(--card) 140px);
+  }
+  .plan-panel-branded::before,
+  .plan-panel-branded::after {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border-radius: 12px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .plan-panel-branded::before {
+    border: 1px solid rgba(239,125,26,0.22);
+  }
+  .plan-panel-branded::after {
+    inset: 12px;
+    border: 1px solid rgba(15,124,140,0.15);
+  }
+  .plan-watermark {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 340px; height: 340px;
+    transform: translate(-50%, -50%);
+    background-image: url('assets/logo.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.05;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .plan-branded-head {
+    position: relative; z-index: 1;
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 6px; padding-bottom: 16px;
+    border-bottom: 1.5px dashed rgba(239,125,26,0.3);
+  }
+  .plan-brand-logo { width: 46px; height: 46px; object-fit: contain; flex-shrink: 0; }
+  .plan-brand-title { font-size: 16.5px; font-weight: 900; }
+  .plan-brand-mentor { font-size: 12px; color: var(--orange-deep); font-weight: 700; margin-top: 3px; }
   .panel .desc { color: var(--ink-soft); font-size: 12.5px; margin-bottom: 20px; }
   .empty-state { text-align: center; color: var(--ink-soft); font-size: 13px; padding: 34px 0; }
  
@@ -377,10 +423,18 @@
  
     <div class="section-view" id="section-plan">
       <div class="back-row"><button class="back-btn" onclick="goHome()">→ بازگشت</button><span class="section-title">برنامهٔ هفتگی</span></div>
-      <div class="panel">
-        <p class="desc">ساعات کلاس (آبی) و پارت‌های مطالعاتی مشاور — بعد از مطالعه، ساعت و تعداد تست را ثبت و تیک بزنید</p>
-        <div id="weekGrid" class="week-grid"></div>
-        <div id="planNoteBox" style="display:none; margin-top:18px; background:var(--teal-tint); border:1px solid rgba(15,124,140,0.25); border-radius:11px; padding:15px; font-size:13px; color:var(--teal); line-height:1.85;">
+      <div class="panel plan-panel-branded">
+        <div class="plan-watermark"></div>
+        <div class="plan-branded-head">
+          <img src="assets/logo.png" alt="آما" class="plan-brand-logo" onerror="this.style.display='none'">
+          <div>
+            <div class="plan-brand-title">برنامهٔ هفتگی مطالعاتی</div>
+            <div class="plan-brand-mentor" id="planMentorName">مشاور: —</div>
+          </div>
+        </div>
+        <p class="desc" style="position:relative;">ساعات کلاس (آبی) و پارت‌های مطالعاتی مشاور — بعد از مطالعه، ساعت و تعداد تست را ثبت و تیک بزنید</p>
+        <div id="weekGrid" class="week-grid" style="position:relative;"></div>
+        <div id="planNoteBox" style="display:none; position:relative; margin-top:18px; background:var(--teal-tint); border:1px solid rgba(15,124,140,0.25); border-radius:11px; padding:15px; font-size:13px; color:var(--teal); line-height:1.85;">
           <div style="font-weight:800; font-size:12.5px; margin-bottom:6px;">توضیح مشاور دربارهٔ این برنامه</div>
           <div id="planNoteContent"></div>
         </div>
@@ -452,6 +506,15 @@
  
     function jsDayToOurDay(jsDay) { return jsDay === 6 ? 1 : jsDay + 2; }
  
+    // فرمت‌دهی تاریخ بر اساس منطقهٔ زمانی محلی (نه UTC) — چون toISOString همیشه UTC می‌ده
+    // و برای ایران (UTC+3:30) باعث می‌شد تاریخ یک روز به عقب برگرده
+    function toLocalDateStr(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+ 
     window.goTo = function (section) {
       document.getElementById('view-home').style.display = 'none';
       document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
@@ -489,6 +552,29 @@
       loadNotifications();
       loadStreak();
       loadHeroStats();
+      loadMentorName();
+    }
+ 
+    async function loadMentorName() {
+      const { data: link } = await supabaseClient
+        .from('mentor_links')
+        .select('mentor_id')
+        .eq('student_id', currentSession.user.id)
+        .maybeSingle();
+ 
+      const nameEl = document.getElementById('planMentorName');
+      if (!link) {
+        nameEl.textContent = 'مشاوری هنوز لینک نشده است';
+        return;
+      }
+ 
+      const { data: mentorProfile } = await supabaseClient
+        .from('profiles')
+        .select('first_name, last_name')
+        .eq('id', link.mentor_id)
+        .maybeSingle();
+ 
+      nameEl.textContent = mentorProfile ? `مشاور: ${mentorProfile.first_name} ${mentorProfile.last_name}` : 'مشاوری هنوز لینک نشده است';
     }
  
     function renderAvatarEverywhere(profile) {
@@ -590,7 +676,7 @@
       for (let d = 1; d <= 7; d++) {
         const dt = new Date(saturday);
         dt.setDate(saturday.getDate() + (d - 1));
-        dates[d] = dt.toISOString().slice(0, 10);
+        dates[d] = toLocalDateStr(dt);
       }
       return dates;
     }
@@ -664,7 +750,7 @@
       const uniqueDates = [...new Set(logs.map(l => l.log_date))];
       let streak = 0; let cursor = new Date(); cursor.setHours(0,0,0,0);
       for (let i = 0; i < uniqueDates.length + 1; i++) {
-        const cursorStr = cursor.toISOString().slice(0,10);
+        const cursorStr = toLocalDateStr(cursor);
         if (uniqueDates.includes(cursorStr)) { streak++; cursor.setDate(cursor.getDate() - 1); } else break;
       }
       document.getElementById('streakNum').textContent = streak;
@@ -871,7 +957,7 @@
       (participations || []).forEach(p => { if (p.exams) notifs.push({ warn: false, text: `آزمون «${p.exams.title}» هنوز انجام نشده است.` }); });
  
       const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-      const yStr = yesterday.toISOString().slice(0,10);
+      const yStr = toLocalDateStr(yesterday);
       const yesterdayOurDay = jsDayToOurDay(yesterday.getDay());
       const { data: planItems } = await supabaseClient.from('study_plan_items').select('*').eq('student_id', sid).eq('day_of_week', yesterdayOurDay);
       const { data: yLogs } = await supabaseClient.from('study_logs').select('*').eq('student_id', sid).eq('log_date', yStr);
