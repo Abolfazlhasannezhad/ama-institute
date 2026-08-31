@@ -9,176 +9,214 @@
   :root {
     --bg: #f3f5f8; --card: #ffffff; --ink: #1e2938; --ink-soft: #6b7684; --line: #e7eaef;
     --orange: #ef7d1a; --orange-deep: #d4650a; --orange-tint: #fef1e3;
-    --teal: #0f7c8c; --teal-tint: #e4f5f7; --navy: #14232f;
+    --teal: #0f7c8c; --teal-tint: #e4f5f7; --gold: #b8860f; --gold-tint: #fbf1dd;
     --error: #d64b3a;
     --shadow-sm: 0 1px 3px rgba(20,30,45,0.06), 0 1px 2px rgba(20,30,45,0.08);
-    --shadow-lg: 0 25px 60px -20px rgba(20,30,45,0.28);
+    --shadow-lg: 0 30px 70px -25px rgba(20,30,45,0.22);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Vazirmatn', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
-  .mono { font-family: 'JetBrains Mono', monospace; }
-
-  .wrap { min-height: 100vh; display: grid; grid-template-columns: 1.1fr 1fr; }
-  @media (max-width: 880px) { .wrap { grid-template-columns: 1fr; } .brand-side { display: none; } }
-
-  /* ===== سمت برند (راست) ===== */
-  .brand-side {
-    background: var(--navy);
-    background-image:
-      linear-gradient(155deg, #0e1a22 0%, #14323b 55%, #0f7c8c 130%),
-      repeating-linear-gradient(135deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 16px);
-    color: #fff; padding: 56px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden;
+  html, body { height: 100%; }
+  body {
+    font-family: 'Vazirmatn', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
   }
-  .brand-side::after {
-    content: ""; position: absolute; left: -80px; bottom: -80px; width: 300px; height: 300px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(239,125,26,0.14), transparent 70%);
+ 
+  /* ===== پس‌زمینهٔ محو و لایه‌ای ===== */
+  .bg-scene { position: absolute; inset: 0; z-index: 0; }
+  .bg-blob { position: absolute; border-radius: 50%; filter: blur(90px); }
+  .bg-blob.b1 { width: 520px; height: 520px; background: rgba(239,125,26,0.14); top: -140px; right: 6%; }
+  .bg-blob.b2 { width: 480px; height: 480px; background: rgba(15,124,140,0.14); bottom: -160px; right: 28%; }
+  .bg-blob.b3 { width: 360px; height: 360px; background: rgba(184,134,11,0.10); top: 42%; right: 0%; }
+  .bg-grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(30,41,56,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(30,41,56,0.035) 1px, transparent 1px);
+    background-size: 46px 46px;
   }
-  .brand-top { display: flex; align-items: center; gap: 14px; position: relative; z-index: 1; }
-  .brand-logo { width: 52px; height: 52px; flex-shrink: 0; }
-  .brand-top .school { font-weight: 900; font-size: 19px; }
-  .brand-top .tag { font-size: 11.5px; color: #9db2bc; margin-top: 2px; }
-
-  .brand-mid { position: relative; z-index: 1; }
-  .brand-mid h2 { font-size: 32px; font-weight: 900; line-height: 1.5; margin-bottom: 16px; max-width: 420px; }
-  .brand-mid p { font-size: 14px; color: #b7c5cb; line-height: 2; max-width: 400px; }
-
-  .brand-contact { display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 1; }
-  .brand-contact .c-row { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #d7e2e6; }
-  .brand-contact .c-row svg { width: 17px; height: 17px; color: #f2a35c; flex-shrink: 0; }
-  .brand-contact .c-row .num { font-family: 'JetBrains Mono'; letter-spacing: 0.4px; }
-
-  /* ===== سمت فرم ===== */
-  .form-side { display: flex; align-items: center; justify-content: center; padding: 40px 24px; background: var(--card); }
-  .form-box { width: 100%; max-width: 380px; }
-  .mobile-brand { display: none; align-items: center; gap: 10px; margin-bottom: 28px; }
-  @media (max-width: 880px) { .mobile-brand { display: flex; } }
-  .mobile-brand img { width: 40px; }
-  .mobile-brand span { font-weight: 800; font-size: 16px; }
-
-  .form-eyebrow { font-size: 11.5px; font-weight: 700; color: var(--orange-deep); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
-  .form-box h1 { font-size: 25px; font-weight: 900; margin-bottom: 8px; }
-  .form-box .sub { color: var(--ink-soft); font-size: 13.5px; margin-bottom: 30px; }
-
+ 
+  /* ===== گوشه‌های بریدهٔ رنگی (امضای طراحی) ===== */
+  .corner-cut { position: absolute; width: 120px; height: 120px; z-index: 2; }
+  .corner-cut.tl { top: 0; left: 0; background: var(--gold); clip-path: polygon(0 0, 100% 0, 0 100%); opacity: 0.9; }
+  .corner-cut.br { bottom: 0; right: 0; background: var(--orange); clip-path: polygon(100% 100%, 0 100%, 100% 0); opacity: 0.9; }
+ 
+  /* ===== محتوای اصلی ===== */
+  .wrap {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 60px 8%;
+    gap: 60px;
+  }
+  @media (max-width: 980px) { .wrap { flex-direction: column; padding: 100px 6% 60px; text-align: center; } }
+ 
+  /* ===== کارت شیشه‌ای (فرم) ===== */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(18px);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 40px 38px;
+    width: 100%; max-width: 400px;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-lg);
+  }
+  .glass-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+  .glass-brand img { width: 44px; height: 44px; object-fit: contain; }
+  .glass-brand .name { font-weight: 900; font-size: 17px; }
+  .glass-brand .tag { font-size: 11px; color: var(--ink-soft); }
+ 
+  .glass-card h1 { font-size: 21px; font-weight: 800; margin-bottom: 10px; line-height: 1.5; }
+  .glass-card .sub { font-size: 12.5px; color: var(--ink-soft); line-height: 1.9; margin-bottom: 26px; }
+ 
   label { display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 8px; color: var(--ink); }
-  .field { margin-bottom: 18px; }
+  .field { margin-bottom: 16px; }
   .input-wrap { position: relative; }
   .input-wrap svg { position: absolute; top: 50%; right: 14px; transform: translateY(-50%); width: 16px; height: 16px; color: var(--ink-soft); }
   input {
-    width: 100%; padding: 13px 40px 13px 14px; border-radius: 10px; border: 1.5px solid var(--line);
-    font-family: inherit; font-size: 14.5px; background: var(--bg); color: var(--ink);
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    width: 100%; padding: 12px 40px 12px 14px; border-radius: 10px;
+    border: 1.5px solid var(--line); font-family: inherit; font-size: 14px;
+    background: var(--bg); color: var(--ink);
   }
   input::placeholder { color: #a7b0b9; }
-  input:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(239,125,26,0.12); background: #fff; }
-
+  input:focus { outline: none; border-color: var(--orange); background: #fff; box-shadow: 0 0 0 3px rgba(239,125,26,0.1); }
+ 
   button {
-    width: 100%; padding: 14px; border-radius: 10px; border: none;
+    width: 100%; padding: 13px; border-radius: 10px; border: none;
     background: linear-gradient(95deg, var(--orange), var(--orange-deep)); color: #fff;
     font-family: inherit; font-size: 14.5px; font-weight: 800; cursor: pointer; margin-top: 6px;
     box-shadow: var(--shadow-sm); transition: opacity 0.15s ease, transform 0.1s ease;
   }
-  button:hover { opacity: 0.93; }
+  button:hover { opacity: 0.92; }
   button:active { transform: scale(0.99); }
   button:disabled { opacity: 0.55; cursor: not-allowed; }
-
-  .msg { margin-top: 16px; font-size: 13px; border-radius: 9px; padding: 10px 12px; display: none; }
+ 
+  .msg { margin-top: 14px; font-size: 12.5px; border-radius: 9px; padding: 9px 11px; display: none; }
   .msg.error { display: block; background: #fdeceb; color: var(--error); border: 1px solid rgba(214,75,58,0.3); }
   .msg.info { display: block; background: var(--teal-tint); color: var(--teal); border: 1px solid rgba(15,124,140,0.3); }
-
-  .form-footer { text-align: center; font-size: 12px; color: var(--ink-soft); margin-top: 30px; }
-  .form-footer a { color: var(--orange-deep); font-weight: 700; text-decoration: none; }
+ 
+  .contact-row {
+    margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--line);
+    font-size: 11.5px; color: var(--ink-soft); text-align: center; line-height: 2;
+  }
+  .contact-row b { color: var(--orange-deep); font-weight: 800; font-family: 'JetBrains Mono'; }
+ 
+  /* ===== متن سمت چپ (هدلاین) ===== */
+  .hero-text { max-width: 560px; position: relative; z-index: 1; }
+  .hero-text .eyebrow {
+    display: inline-block; font-size: 11.5px; font-weight: 700; letter-spacing: 0.6px;
+    color: var(--orange-deep); background: var(--orange-tint); border: 1px solid rgba(239,125,26,0.3);
+    padding: 6px 14px; border-radius: 100px; margin-bottom: 20px;
+  }
+  .hero-text h2 { font-size: 34px; font-weight: 900; line-height: 1.6; margin-bottom: 18px; color: var(--ink); }
+  .hero-text h2 span { color: var(--orange-deep); }
+  .hero-text p { font-size: 14.5px; color: var(--ink-soft); line-height: 2; max-width: 460px; }
+  @media (max-width: 980px) { .hero-text p { margin: 0 auto; } }
+ 
+  .plan-watermark {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 640px; height: 640px;
+    transform: translate(-50%, -50%);
+    background-image: url('assets/logo.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.06;
+    pointer-events: none;
+    z-index: 0;
+  }
 </style>
 </head>
 <body>
-
-  <div class="wrap">
-    <div class="brand-side">
-      <div class="brand-top">
-        <img class="brand-logo" src="assets/logo.png" alt="آما">
-        <div>
-          <div class="school">آما</div>
-          <div class="tag">سامانهٔ هوشمند آموزشی</div>
-        </div>
-      </div>
-
-      <div class="brand-mid">
-        <h2>مدیریت هوشمند مسیر تحصیلی، در یک سامانهٔ یکپارچه</h2>
-        <p>برنامه‌ریزی مطالعاتی، آزمون آنلاین زمان‌دار، و پیگیری روند پیشرفت — همه در یک پنل، برای مدیر، مشاور، دبیر و دانش‌آموز.</p>
-      </div>
-
-      <div class="brand-contact">
-        <div class="c-row">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>
-          <span class="num">۰۹۰۴۶۳۴۱۰۳۴</span>
-        </div>
-        <div class="c-row">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-          <span>نی‌ریز، خیابان شعله، جنب عطاری</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-side">
-      <div class="form-box">
-        <div class="mobile-brand"><img src="assets/logo.png" alt="آما"><span>آما</span></div>
-
-        <div class="form-eyebrow">پنل کاربری</div>
-        <h1>ورود به سامانه</h1>
-        <p class="sub">با نام کاربری و رمز عبوری که دریافت کرده‌اید وارد شوید</p>
-
-        <form id="loginForm">
-          <div class="field">
-            <label for="username">نام کاربری</label>
-            <div class="input-wrap">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
-              <input type="text" id="username" placeholder="مثلاً std482913" autocomplete="username" required>
-            </div>
-          </div>
-          <div class="field">
-            <label for="password">رمز عبور</label>
-            <div class="input-wrap">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-              <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
-            </div>
-          </div>
-          <button type="submit" id="loginBtn">ورود به سامانه</button>
-          <div class="msg" id="msgBox"></div>
-        </form>
-
-        <p class="form-footer">دسترسی نامعتبر؟ <a href="#">با پشتیبانی آما تماس بگیرید</a></p>
-      </div>
-    </div>
+ 
+  <div class="bg-scene">
+    <div class="bg-blob b1"></div>
+    <div class="bg-blob b2"></div>
+    <div class="bg-blob b3"></div>
+    <div class="bg-grid"></div>
   </div>
-
+  <div class="corner-cut tl"></div>
+  <div class="corner-cut br"></div>
+  <div class="plan-watermark"></div>
+ 
+  <div class="wrap">
+ 
+    <div class="hero-text">
+      <span class="eyebrow">سامانهٔ هوشمند آموزشی</span>
+      <h2>پلی میان <span>مشاور، دبیر و دانش‌آموز</span> در مسیر یادگیری</h2>
+      <p>برنامه‌ریزی مطالعاتی هوشمند، آزمون آنلاین زمان‌دار، و پیگیری دقیق روند پیشرفت — همه در یک سامانهٔ یکپارچه، برای مؤسسهٔ آما.</p>
+    </div>
+ 
+    <div class="glass-card">
+      <div class="glass-brand">
+        <img src="assets/logo.png" alt="آما">
+        <div>
+          <div class="name">آما</div>
+          <div class="tag">پنل ورود کاربران</div>
+        </div>
+      </div>
+ 
+      <h1>به سامانهٔ هوشمند آما خوش آمدید</h1>
+      <p class="sub">با نام کاربری و رمز عبوری که دریافت کرده‌اید وارد شوید.</p>
+ 
+      <form id="loginForm">
+        <div class="field">
+          <label for="username">نام کاربری</label>
+          <div class="input-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+            <input type="text" id="username" placeholder="مثلاً std482913" autocomplete="username" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="password">رمز عبور</label>
+          <div class="input-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+          </div>
+        </div>
+        <button type="submit" id="loginBtn">ورود به سامانه</button>
+        <div class="msg" id="msgBox"></div>
+      </form>
+ 
+      <div class="contact-row">
+        <b>۰۹۰۴۶۳۴۱۰۳۴</b> — نی‌ریز، خیابان شعله، جنب عطاری
+      </div>
+    </div>
+ 
+  </div>
+ 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <script>
     const form = document.getElementById('loginForm');
     const msgBox = document.getElementById('msgBox');
     const loginBtn = document.getElementById('loginBtn');
-
+ 
     function showMessage(text, type) { msgBox.textContent = text; msgBox.className = 'msg ' + type; }
-
+ 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       msgBox.className = 'msg';
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
-
+ 
       loginBtn.disabled = true;
       loginBtn.textContent = 'در حال ورود...';
-
+ 
       const email = usernameToEmail(username);
       const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
+ 
       if (error) {
         showMessage('نام کاربری یا رمز عبور اشتباه است.', 'error');
         loginBtn.disabled = false; loginBtn.textContent = 'ورود به سامانه';
         return;
       }
-
+ 
       const { data: profile, error: profileError } = await supabaseClient.from('profiles').select('*').eq('id', data.user.id).single();
-
+ 
       if (profileError || !profile) {
         showMessage('حساب شما یافت نشد. با پشتیبانی تماس بگیرید.', 'error');
         loginBtn.disabled = false; loginBtn.textContent = 'ورود به سامانه';
@@ -189,12 +227,14 @@
         loginBtn.disabled = false; loginBtn.textContent = 'ورود به سامانه';
         return;
       }
-
+ 
       showMessage('ورود موفق. در حال انتقال...', 'info');
       window.location.href = 'dashboard.html';
     });
   </script>
-
-  <div style="text-align:center; padding:22px 12px; font-size:11.5px; color:#93a09d; font-family:Vazirmatn,sans-serif;">توسعه‌یافته توسط ابوالفضل حسن‌نژاد — تلگرام: <a href="https://t.me/abolfazl9195" target="_blank" style="color:#ef7d1a; text-decoration:none;">@abolfazl9195</a></div>
+ 
+  <div style="position:relative; z-index:1; text-align:center; padding:16px 12px; font-size:11px; color:var(--ink-soft); font-family:Vazirmatn,sans-serif;">توسعه‌یافته توسط ابوالفضل حسن‌نژاد — تلگرام: <a href="https://t.me/abolfazl9195" target="_blank" style="color:#ef7d1a; text-decoration:none;">@abolfazl9195</a></div>
+ 
 </body>
 </html>
+ 
