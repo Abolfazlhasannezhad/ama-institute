@@ -40,10 +40,7 @@ const LOGO_DATA_URI = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAGRCAY
  
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('img[src="assets/logo.png"]').forEach(function (img) {
-    img.addEventListener('error', function () {
-      this.onerror = null;
-      this.src = LOGO_DATA_URI;
-    });
+    img.src = LOGO_DATA_URI;
   });
   document.querySelectorAll('.plan-watermark').forEach(function (el) {
     el.style.backgroundImage = "url('" + LOGO_DATA_URI + "')";
