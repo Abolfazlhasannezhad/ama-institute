@@ -37,6 +37,8 @@
  
   .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
   .tab { padding: 10px 18px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink-soft); font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; box-shadow: var(--shadow-sm); }
+  .week-toggle-btn { padding: 8px 16px; border-radius: 9px; border: 1px solid var(--line); background: var(--bg); color: var(--ink-soft); font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+  .week-toggle-btn.active { background: var(--orange); color: #fff; border-color: transparent; }
   .tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
  
   .panel { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 26px; box-shadow: var(--shadow-sm); }
@@ -91,6 +93,14 @@
  
   .ghost-btn { background: none; border: 1.5px dashed var(--line); border-radius: 9px; padding: 10px; width: 100%; color: var(--ink-soft); font-family: inherit; font-size: 13.5px; cursor: pointer; }
   .ghost-btn:hover { border-color: var(--orange); color: var(--orange-deep); }
+  .subject-row {
+    background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 14px;
+    margin-bottom: 10px; display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr auto; gap: 10px; align-items: end;
+  }
+  .subject-row label { font-size: 11px; margin-bottom: 5px; }
+  .subject-row input { padding: 9px 10px; font-size: 13px; }
+  .subject-row .remove-subject { background: none; border: none; color: var(--bad); cursor: pointer; font-size: 18px; padding: 8px; }
+  @media (max-width: 720px) { .subject-row { grid-template-columns: 1fr 1fr; } }
  
   button.submit { width: 100%; padding: 13px; border-radius: 10px; border: none; background: linear-gradient(95deg, var(--orange), var(--orange-deep)); color: #fff; font-family: inherit; font-size: 14.5px; font-weight: 800; cursor: pointer; margin-top: 16px; box-shadow: var(--shadow-sm); }
   button.submit:disabled { opacity: 0.55; cursor: not-allowed; }
@@ -179,13 +189,33 @@
         </div>
         <div class="row2">
           <div class="field"><label>پایان مجاز (اختیاری)</label><input type="datetime-local" id="examEnd"></div>
-          <div class="field"></div>
+          <div class="field">
+            <label>&nbsp;</label>
+            <label style="display:flex; align-items:center; gap:8px; font-weight:400; cursor:pointer; margin-top:10px;">
+              <input type="checkbox" id="examRandomize" style="width:auto;"> رندوم‌سازی ترتیب سؤالات هر درس
+            </label>
+          </div>
         </div>
         <div class="field"><label>دانش‌آموزان شرکت‌کننده</label><div id="participantChecklist" class="checklist"></div></div>
         <div class="qbank"><label>سؤالات آزمون</label><div id="questionList"></div><button type="button" class="ghost-btn" id="addQuestionBtn">+ افزودن سؤال</button></div>
         <button type="submit" class="submit" id="examSubmitBtn">ساخت و ثبت آزمون</button>
         <div class="msg" id="examMsg"></div>
       </form>
+      <div class="divider"></div>
+      <h2>ثبت کارنامهٔ آزمون حضوری</h2>
+      <p class="desc">اگه آزمونی به‌صورت حضوری (کاغذی) و چنددرسی برگزار کردی، اینجا کارنامه‌ش رو برای دانش‌آموز ثبت کن</p>
+      <div class="row2">
+        <div class="field"><label>انتخاب دانش‌آموز</label><select id="offlineStudentSelect"></select></div>
+        <div class="field"><label>عنوان آزمون</label><input type="text" id="offlineExamTitle" placeholder="مثلاً آزمون جامع شمارهٔ ۳"></div>
+      </div>
+ 
+      <div id="subjectRowsWrap"></div>
+      <button type="button" class="ghost-btn" id="addSubjectRowBtn">+ افزودن درس</button>
+ 
+      <div id="offlinePreview" style="font-size:12.5px; color:var(--ink-soft); margin-top:14px; padding:12px; background:var(--bg); border-radius:9px;">نمرهٔ کل به‌صورت خودکار محاسبه می‌شود</div>
+ 
+      <button class="submit" id="offlineExamBtn">ثبت کارنامه</button>
+      <div class="msg" id="offlineExamMsg"></div>
       <div class="divider"></div>
       <h2>آزمون‌های ساخته‌شدهٔ من</h2>
       <div id="examListWrap"><div class="empty-state">در حال بارگذاری...</div></div>
@@ -195,6 +225,10 @@
       <h2>برنامهٔ هفتگی مطالعاتی</h2>
       <p class="desc">یک دانش‌آموز را انتخاب کن و برای هر روز هفته پارت‌های مطالعاتی تعریف کن</p>
       <div class="field"><label>انتخاب دانش‌آموز</label><select id="planStudentSelect"></select></div>
+      <div style="display:flex; gap:8px; margin-bottom:14px;">
+        <button class="week-toggle-btn active" id="thisWeekBtn" data-offset="0">این هفته</button>
+        <button class="week-toggle-btn" id="nextWeekBtn" data-offset="1">هفتهٔ آینده</button>
+      </div>
       <div id="weekGrid" class="week-grid"></div>
  
       <div class="field" style="margin-top:20px;">
@@ -255,6 +289,7 @@
       if (linkError || !links || links.length === 0) {
         wrap.innerHTML = '<div class="empty-state">هنوز هیچ دانش‌آموزی به شما لینک نشده است</div>';
         renderParticipantChecklist();
+        populateOfflineStudentSelect();
         populatePlanStudentSelect();
         renderCompareChart();
         return;
@@ -270,6 +305,7 @@
       if (studentError || !students || students.length === 0) {
         wrap.innerHTML = '<div class="empty-state">دانش‌آموزی یافت نشد</div>';
         renderParticipantChecklist();
+        populateOfflineStudentSelect();
         populatePlanStudentSelect();
         renderCompareChart();
         return;
@@ -292,6 +328,7 @@
       wrap.innerHTML = html;
  
       renderParticipantChecklist();
+      populateOfflineStudentSelect();
       populatePlanStudentSelect();
       renderCompareChart();
       loadMyExams();
@@ -302,6 +339,143 @@
     // ==================================================================
     let myStudents = [];
     let questionCounter = 0;
+ 
+    function populateOfflineStudentSelect() {
+      const sel = document.getElementById('offlineStudentSelect');
+      sel.innerHTML = myStudents.length === 0
+        ? '<option value="">— دانش‌آموزی لینک نشده —</option>'
+        : myStudents.map(s => `<option value="${s.id}">${s.first_name} ${s.last_name}</option>`).join('');
+    }
+ 
+    function calcKonkurScore(total, correct, wrong) {
+      const rawScore = correct - (wrong / 3);
+      return Math.round(Math.max(0, (rawScore / total) * 100) * 10) / 10;
+    }
+ 
+    let subjectRowCounter = 0;
+ 
+    function addSubjectRow() {
+      subjectRowCounter++;
+      const rowId = 'srow-' + subjectRowCounter;
+      const div = document.createElement('div');
+      div.className = 'subject-row';
+      div.dataset.rowId = rowId;
+      div.innerHTML = `
+        <div><label>نام درس</label><input type="text" class="sr-subject" placeholder="مثلاً فیزیک"></div>
+        <div><label>تعداد کل</label><input type="number" class="sr-total" min="1"></div>
+        <div><label>صحیح</label><input type="number" class="sr-correct" min="0"></div>
+        <div><label>غلط</label><input type="number" class="sr-wrong" min="0"></div>
+        <button type="button" class="remove-subject" onclick="this.closest('.subject-row').remove(); updateOfflinePreview();">✕</button>
+      `;
+      document.getElementById('subjectRowsWrap').appendChild(div);
+      div.querySelectorAll('input').forEach(inp => inp.addEventListener('input', updateOfflinePreview));
+    }
+    document.getElementById('addSubjectRowBtn').addEventListener('click', addSubjectRow);
+ 
+    function collectSubjectRows() {
+      return Array.from(document.querySelectorAll('.subject-row')).map(row => ({
+        subject: row.querySelector('.sr-subject').value.trim(),
+        total: parseInt(row.querySelector('.sr-total').value) || 0,
+        correct: parseInt(row.querySelector('.sr-correct').value) || 0,
+        wrong: parseInt(row.querySelector('.sr-wrong').value) || 0,
+      }));
+    }
+ 
+    window.updateOfflinePreview = function () {
+      const rows = collectSubjectRows();
+      const preview = document.getElementById('offlinePreview');
+      const validRows = rows.filter(r => r.total > 0);
+ 
+      if (validRows.length === 0) { preview.textContent = 'نمرهٔ کل به‌صورت خودکار محاسبه می‌شود'; preview.style.color = 'var(--ink-soft)'; return; }
+ 
+      const invalid = validRows.some(r => r.correct + r.wrong > r.total);
+      if (invalid) { preview.textContent = 'در یکی از درس‌ها، مجموع صحیح و غلط از کل بیشتره!'; preview.style.color = 'var(--bad)'; return; }
+ 
+      const totalAll = validRows.reduce((s, r) => s + r.total, 0);
+      const correctAll = validRows.reduce((s, r) => s + r.correct, 0);
+      const wrongAll = validRows.reduce((s, r) => s + r.wrong, 0);
+      const scoreAll = calcKonkurScore(totalAll, correctAll, wrongAll);
+ 
+      preview.style.color = 'var(--orange-deep)';
+      preview.innerHTML = `مجموع سؤالات: <b>${totalAll}</b> — نمرهٔ کل محاسبه‌شده: <b>${scoreAll}</b> از ۱۰۰`;
+    };
+ 
+    addSubjectRow(); // یک ردیف اولیه برای شروع (حالا که updateOfflinePreview تعریف شده، امن است)
+ 
+    document.getElementById('offlineExamBtn').addEventListener('click', async () => {
+      const msg = document.getElementById('offlineExamMsg');
+      msg.className = 'msg';
+ 
+      const studentId = document.getElementById('offlineStudentSelect').value;
+      const title = document.getElementById('offlineExamTitle').value.trim();
+      const rows = collectSubjectRows().filter(r => r.subject && r.total > 0);
+ 
+      if (!studentId || !title || rows.length === 0) {
+        msg.textContent = 'انتخاب دانش‌آموز، عنوان آزمون و حداقل یک درس با تعداد سؤال لازم است.';
+        msg.className = 'msg error';
+        return;
+      }
+      if (rows.some(r => r.correct + r.wrong > r.total)) {
+        msg.textContent = 'در یکی از درس‌ها، مجموع صحیح و غلط از کل بیشتره.';
+        msg.className = 'msg error';
+        return;
+      }
+ 
+      const btn = document.getElementById('offlineExamBtn');
+      btn.disabled = true; btn.textContent = 'در حال ثبت...';
+ 
+      const { data: exam, error: examError } = await supabaseClient
+        .from('exams')
+        .insert({ creator_id: currentSession.user.id, creator_role: 'mentor', title, exam_type: 'individual', duration_minutes: 0 })
+        .select()
+        .single();
+ 
+      if (examError || !exam) {
+        msg.textContent = friendlyError(examError);
+        msg.className = 'msg error';
+        btn.disabled = false; btn.textContent = 'ثبت کارنامه';
+        return;
+      }
+ 
+      const subjectRowsPayload = rows.map((r, idx) => ({
+        exam_id: exam.id,
+        student_id: studentId,
+        subject: r.subject,
+        total_questions: r.total,
+        correct_count: r.correct,
+        wrong_count: r.wrong,
+        order_index: idx,
+      }));
+      const { error: subjError } = await supabaseClient.from('exam_subject_results').insert(subjectRowsPayload);
+ 
+      const totalAll = rows.reduce((s, r) => s + r.total, 0);
+      const correctAll = rows.reduce((s, r) => s + r.correct, 0);
+      const wrongAll = rows.reduce((s, r) => s + r.wrong, 0);
+      const scoreAll = calcKonkurScore(totalAll, correctAll, wrongAll);
+ 
+      const { error: resultError } = await supabaseClient.from('exam_results').insert({
+        exam_id: exam.id,
+        student_id: studentId,
+        score: scoreAll,
+        correct_count: correctAll,
+        wrong_count: wrongAll,
+        total_questions: totalAll,
+      });
+ 
+      if (subjError || resultError) {
+        msg.textContent = friendlyError(subjError || resultError);
+        msg.className = 'msg error';
+      } else {
+        msg.textContent = `کارنامه با موفقیت ثبت شد. نمرهٔ کل: ${scoreAll}`;
+        msg.className = 'msg success';
+        document.getElementById('offlineExamTitle').value = '';
+        document.getElementById('subjectRowsWrap').innerHTML = '';
+        addSubjectRow();
+        updateOfflinePreview();
+        loadMyExams();
+      }
+      btn.disabled = false; btn.textContent = 'ثبت کارنامه';
+    });
  
     function renderParticipantChecklist() {
       const wrap = document.getElementById('participantChecklist');
@@ -325,6 +499,7 @@
       div.dataset.qid = qId;
       div.innerHTML = `
         <input type="text" placeholder="متن سؤال" class="q-text" required>
+        <input type="text" placeholder="موضوع/درس (مثلاً مثلثات)" class="q-subject" style="margin-bottom:8px;">
         <div class="opt-grid">
           <input type="text" placeholder="گزینه الف" class="q-a">
           <input type="text" placeholder="گزینه ب" class="q-b">
@@ -352,6 +527,7 @@
       const duration = parseInt(document.getElementById('examDuration').value);
       const startAt = document.getElementById('examStart').value || null;
       const endAt = document.getElementById('examEnd').value || null;
+      const randomize = document.getElementById('examRandomize').checked;
  
       const participantIds = Array.from(document.querySelectorAll('.participant-check:checked')).map(c => c.value);
       const questionRows = Array.from(document.querySelectorAll('.question-row'));
@@ -459,16 +635,59 @@
     // ==================================================================
     const dayNames = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'];
  
+    // ==================================================================
+    // محاسبهٔ تاریخ شروع هفته (شنبه) — برای تفکیک «این هفته» از «هفتهٔ آینده»
+    // ==================================================================
+    function jsDayToOurDay(jsDay) { return jsDay === 6 ? 1 : jsDay + 2; }
+    function toLocalDateStr(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+    function getWeekStartDate(offsetWeeks) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const todayOurDay = jsDayToOurDay(today.getDay());
+      const saturday = new Date(today);
+      saturday.setDate(today.getDate() - (todayOurDay - 1) + (offsetWeeks * 7));
+      return toLocalDateStr(saturday);
+    }
+ 
+    let selectedWeekOffset = 0;
+    let currentPlanStudentId = null;
+ 
+    document.getElementById('thisWeekBtn').addEventListener('click', () => {
+      selectedWeekOffset = 0;
+      document.getElementById('thisWeekBtn').classList.add('active');
+      document.getElementById('nextWeekBtn').classList.remove('active');
+      if (currentPlanStudentId) renderWeekGrid(currentPlanStudentId);
+    });
+    document.getElementById('nextWeekBtn').addEventListener('click', () => {
+      selectedWeekOffset = 1;
+      document.getElementById('nextWeekBtn').classList.add('active');
+      document.getElementById('thisWeekBtn').classList.remove('active');
+      if (currentPlanStudentId) renderWeekGrid(currentPlanStudentId);
+    });
+ 
+    function resetWeekToggle() {
+      selectedWeekOffset = 0;
+      document.getElementById('thisWeekBtn').classList.add('active');
+      document.getElementById('nextWeekBtn').classList.remove('active');
+    }
+ 
     function populatePlanStudentSelect() {
       const sel = document.getElementById('planStudentSelect');
       sel.innerHTML = myStudents.map(s => `<option value="${s.id}">${s.first_name} ${s.last_name}</option>`).join('');
       if (myStudents.length > 0) {
+        resetWeekToggle();
         renderWeekGrid(myStudents[0].id);
         loadPlanNote(myStudents[0].id);
       }
     }
  
     document.getElementById('planStudentSelect').addEventListener('change', (e) => {
+      resetWeekToggle();
       renderWeekGrid(e.target.value);
       loadPlanNote(e.target.value);
     });
@@ -502,12 +721,15 @@
     });
  
     async function renderWeekGrid(studentId) {
+      currentPlanStudentId = studentId;
       const grid = document.getElementById('weekGrid');
+      const weekStart = getWeekStartDate(selectedWeekOffset);
       const { data: items } = await supabaseClient
         .from('study_plan_items')
         .select('*')
         .eq('mentor_id', currentSession.user.id)
         .eq('student_id', studentId)
+        .eq('week_start_date', weekStart)
         .order('order_index');
  
       grid.innerHTML = '';
@@ -539,6 +761,7 @@
         student_id: studentId,
         day_of_week: day,
         part_title: title,
+        week_start_date: getWeekStartDate(selectedWeekOffset),
       });
       renderWeekGrid(studentId);
     };
@@ -613,27 +836,21 @@
         return;
       }
  
-      wrap.innerHTML = planItems.map(p => {
-        // مجموع ساعت و تست ثبت‌شده روی این پارت مشخص، در همهٔ تاریخ‌ها
-        const itemLogs = allLogs.filter(l => l.plan_item_id === p.id);
-        const hours = itemLogs.reduce((s, l) => s + (l.study_hours || 0), 0);
-        const tests = itemLogs.reduce((s, l) => s + (l.test_count || 0), 0);
-        // آخرین وضعیت تکمیل ثبت‌شده برای این پارت (اگه حداقل یک‌بار تیک خورده باشه)
-        const everCompleted = itemLogs.some(l => l.is_completed);
- 
-        return `
-          <div class="part-status-row">
-            <div>
-              <div class="p-name">${p.part_title}</div>
-              <div class="p-day">${dayNames[p.day_of_week - 1]}</div>
-            </div>
-            <div class="p-mini-stats">
-              <span>${hours} ساعت</span>
-              <span>${tests} تست</span>
-              <span class="p-badge ${everCompleted ? 'done' : 'pending'}">${everCompleted ? 'انجام‌شده' : 'انجام‌نشده'}</span>
-            </div>
-          </div>`;
-      }).join('');
+      wrap.innerHTML = '<table><thead><tr><th>پارت</th><th>روز</th><th>ساعت</th><th>تست</th><th>وضعیت</th></tr></thead><tbody>' +
+        planItems.map(p => {
+          const itemLogs = allLogs.filter(l => l.plan_item_id === p.id);
+          const hours = itemLogs.reduce((s, l) => s + (l.study_hours || 0), 0);
+          const tests = itemLogs.reduce((s, l) => s + (l.test_count || 0), 0);
+          const everCompleted = itemLogs.some(l => l.is_completed);
+          return `
+            <tr>
+              <td>${p.part_title}</td>
+              <td style="white-space:nowrap;">${dayNames[p.day_of_week - 1]}</td>
+              <td class="mono">${hours}</td>
+              <td class="mono">${tests}</td>
+              <td><span class="p-badge ${everCompleted ? 'done' : 'pending'}">${everCompleted ? 'انجام‌شده' : 'انجام‌نشده'}</span></td>
+            </tr>`;
+        }).join('') + '</tbody></table>';
     }
  
     window.openStudentDetail = async function (studentId) {
