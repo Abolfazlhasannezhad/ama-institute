@@ -226,6 +226,7 @@
       <p class="desc">یک دانش‌آموز را انتخاب کن و برای هر روز هفته پارت‌های مطالعاتی تعریف کن</p>
       <div class="field"><label>انتخاب دانش‌آموز</label><select id="planStudentSelect"></select></div>
       <div style="display:flex; gap:8px; margin-bottom:14px;">
+        <button class="week-toggle-btn" id="lastWeekBtn" data-offset="-1">هفتهٔ گذشته</button>
         <button class="week-toggle-btn active" id="thisWeekBtn" data-offset="0">این هفته</button>
         <button class="week-toggle-btn" id="nextWeekBtn" data-offset="1">هفتهٔ آینده</button>
       </div>
@@ -657,23 +658,23 @@
     let selectedWeekOffset = 0;
     let currentPlanStudentId = null;
  
-    document.getElementById('thisWeekBtn').addEventListener('click', () => {
-      selectedWeekOffset = 0;
-      document.getElementById('thisWeekBtn').classList.add('active');
-      document.getElementById('nextWeekBtn').classList.remove('active');
+    function selectWeekOffset(offset) {
+      selectedWeekOffset = offset;
+      document.querySelectorAll('.week-toggle-btn').forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.dataset.offset) === offset);
+      });
       if (currentPlanStudentId) renderWeekGrid(currentPlanStudentId);
-    });
-    document.getElementById('nextWeekBtn').addEventListener('click', () => {
-      selectedWeekOffset = 1;
-      document.getElementById('nextWeekBtn').classList.add('active');
-      document.getElementById('thisWeekBtn').classList.remove('active');
-      if (currentPlanStudentId) renderWeekGrid(currentPlanStudentId);
-    });
+    }
+ 
+    document.getElementById('lastWeekBtn').addEventListener('click', () => selectWeekOffset(-1));
+    document.getElementById('thisWeekBtn').addEventListener('click', () => selectWeekOffset(0));
+    document.getElementById('nextWeekBtn').addEventListener('click', () => selectWeekOffset(1));
  
     function resetWeekToggle() {
       selectedWeekOffset = 0;
-      document.getElementById('thisWeekBtn').classList.add('active');
-      document.getElementById('nextWeekBtn').classList.remove('active');
+      document.querySelectorAll('.week-toggle-btn').forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.dataset.offset) === 0);
+      });
     }
  
     function populatePlanStudentSelect() {
