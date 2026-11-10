@@ -2,172 +2,221 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#c75a05">
 <title>ورود | آما</title>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f3f5f8; --card: #ffffff; --ink: #1e2938; --ink-soft: #6b7684; --line: #e7eaef;
-    --orange: #ef7d1a; --orange-deep: #d4650a; --orange-tint: #fef1e3;
-    --teal: #0f7c8c; --teal-tint: #e4f5f7; --gold: #b8860f; --gold-tint: #fbf1dd;
+    --ink: #1e2938; --ink-soft: #5f6b79; --line: #e3e7ed; --field: #f3f5f8;
+    --orange: #ef7d1a; --orange-deep: #c75a05;
+    --teal: #0f7c8c; --teal-deep: #0a4f5c; --teal-tint: #e4f5f7;
     --error: #d64b3a;
-    --shadow-sm: 0 1px 3px rgba(20,30,45,0.06), 0 1px 2px rgba(20,30,45,0.08);
-    --shadow-lg: 0 30px 70px -25px rgba(20,30,45,0.22);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
+  html { -webkit-text-size-adjust: 100%; }
   body {
-    font-family: 'Vazirmatn', sans-serif;
-    background: var(--bg);
-    color: var(--ink);
-    min-height: 100vh;
-    position: relative;
-    overflow: hidden;
+    font-family: 'Vazirmatn', sans-serif; color: var(--ink);
+    min-height: 100vh; min-height: 100dvh;
+    background: var(--teal-deep);
+    display: flex; flex-direction: column;
+    position: relative; overflow-x: hidden;
   }
- 
-  /* ===== پس‌زمینهٔ محو و لایه‌ای ===== */
-  .bg-scene { position: absolute; inset: 0; z-index: 0; }
-  .bg-blob { position: absolute; border-radius: 50%; filter: blur(90px); }
-  .bg-blob.b1 { width: 520px; height: 520px; background: rgba(239,125,26,0.14); top: -140px; right: 6%; }
-  .bg-blob.b2 { width: 480px; height: 480px; background: rgba(15,124,140,0.14); bottom: -160px; right: 28%; }
-  .bg-blob.b3 { width: 360px; height: 360px; background: rgba(184,134,11,0.10); top: 42%; right: 0%; }
-  .bg-grid {
-    position: absolute; inset: 0;
-    background-image: linear-gradient(rgba(30,41,56,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(30,41,56,0.035) 1px, transparent 1px);
-    background-size: 46px 46px;
+
+  /* ===== صحنهٔ رنگی: نارنجی ← فیروزه‌ای + نمادهای ریاضی ===== */
+  .stage {
+    position: fixed; inset: 0; z-index: 0; overflow: hidden;
+    background:
+      radial-gradient(900px 600px at 88% 8%, rgba(255,178,92,0.55), transparent 62%),
+      radial-gradient(800px 620px at 8% 96%, rgba(40,196,210,0.45), transparent 62%),
+      linear-gradient(135deg, #ef7d1a 0%, #c75a05 26%, #0f7c8c 70%, #0a4f5c 100%);
   }
- 
-  /* ===== گوشه‌های بریدهٔ رنگی (امضای طراحی) ===== */
-  .corner-cut { position: absolute; width: 120px; height: 120px; z-index: 2; }
-  .corner-cut.tl { top: 0; left: 0; background: var(--gold); clip-path: polygon(0 0, 100% 0, 0 100%); opacity: 0.9; }
-  .corner-cut.br { bottom: 0; right: 0; background: var(--orange); clip-path: polygon(100% 100%, 0 100%, 100% 0); opacity: 0.9; }
- 
-  /* ===== محتوای اصلی ===== */
+  .stage::after {
+    content: ''; position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.16) 1px, transparent 1.4px);
+    background-size: 26px 26px;
+    -webkit-mask-image: linear-gradient(160deg, #000 0%, transparent 70%);
+            mask-image: linear-gradient(160deg, #000 0%, transparent 70%);
+  }
+  .sym {
+    position: absolute; line-height: 1; color: rgba(255,255,255,0.17);
+    font-family: 'Times New Roman', Georgia, serif; font-style: italic; font-weight: 700;
+    animation: drift 16s ease-in-out infinite alternate;
+    user-select: none; pointer-events: none;
+  }
+  @keyframes drift {
+    from { transform: translateY(0) rotate(-4deg); }
+    to   { transform: translateY(-28px) rotate(7deg); }
+  }
+  .plan-watermark {
+    position: absolute; top: 50%; left: 50%;
+    width: min(620px, 120vw); height: min(620px, 120vw);
+    transform: translate(-50%, -50%);
+    background: url('assets/logo.png') center / contain no-repeat;
+    filter: brightness(0) invert(1); opacity: 0.07;
+    pointer-events: none;
+  }
+
+  /* ===== چیدمان ===== */
   .wrap {
-    position: relative; z-index: 1;
-    min-height: 100vh;
-    display: flex; align-items: center;
-    padding: 60px 8%;
-    gap: 60px;
+    position: relative; z-index: 1; flex: 1;
+    width: 100%; max-width: 1180px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; gap: 56px;
+    padding: 48px 6%;
   }
-  @media (max-width: 980px) { .wrap { flex-direction: column; padding: 100px 6% 60px; text-align: center; } }
- 
-  /* ===== کارت شیشه‌ای (فرم) ===== */
-  .glass-card {
-    background: rgba(255, 255, 255, 0.82);
-    backdrop-filter: blur(18px);
-    border: 1px solid var(--line);
-    border-radius: 18px;
-    padding: 40px 38px;
-    width: 100%; max-width: 400px;
-    flex-shrink: 0;
-    box-shadow: var(--shadow-lg);
+
+  /* ===== متن معرفی ===== */
+  .hero { max-width: 540px; color: #fff; }
+  .hero-logo {
+    width: 60px; height: 60px; border-radius: 18px; background: #fff;
+    display: grid; place-items: center; margin-bottom: 26px;
+    box-shadow: 0 14px 30px -10px rgba(0,0,0,0.4);
   }
-  .glass-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
-  .glass-brand img { width: 44px; height: 44px; object-fit: contain; }
-  .glass-brand .name { font-weight: 900; font-size: 17px; }
-  .glass-brand .tag { font-size: 11px; color: var(--ink-soft); }
- 
-  .glass-card h1 { font-size: 21px; font-weight: 800; margin-bottom: 10px; line-height: 1.5; }
-  .glass-card .sub { font-size: 12.5px; color: var(--ink-soft); line-height: 1.9; margin-bottom: 26px; }
- 
-  label { display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 8px; color: var(--ink); }
+  .hero-logo img { width: 40px; height: 40px; object-fit: contain; }
+  .hero h2 {
+    font-size: clamp(25px, 4.2vw, 44px); font-weight: 900; line-height: 1.65;
+    margin-bottom: 16px; text-shadow: 0 2px 24px rgba(0,0,0,0.18);
+  }
+  .hero p { font-size: 14.5px; line-height: 2; color: rgba(255,255,255,0.88); max-width: 460px; }
+  .chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+  .chip {
+    font-size: 12.5px; font-weight: 700; color: #fff; white-space: nowrap;
+    padding: 8px 14px; border-radius: 100px;
+    background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.35);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  }
+
+  /* ===== کارت ورود ===== */
+  .card {
+    position: relative; overflow: hidden;
+    width: 100%; max-width: 410px; flex-shrink: 0;
+    background: #fff; border-radius: 24px; padding: 36px 30px 28px;
+    box-shadow: 0 50px 90px -35px rgba(4,28,38,0.7);
+    animation: rise 0.7s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; right: 0; left: 0; height: 5px;
+    background: linear-gradient(90deg, var(--orange), var(--teal));
+  }
+  @keyframes rise { from { opacity: 0; transform: translateY(34px); } to { opacity: 1; transform: none; } }
+
+  .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .brand img { width: 42px; height: 42px; object-fit: contain; }
+  .brand .name { font-weight: 900; font-size: 17px; }
+  .brand .tag { font-size: 11.5px; color: var(--ink-soft); }
+  .card h1 { font-size: 20px; font-weight: 800; line-height: 1.6; margin-bottom: 6px; }
+  .card .sub { font-size: 13px; color: var(--ink-soft); line-height: 1.9; margin-bottom: 22px; }
+
+  label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
   .field { margin-bottom: 16px; }
   .input-wrap { position: relative; }
-  .input-wrap svg { position: absolute; top: 50%; right: 14px; transform: translateY(-50%); width: 16px; height: 16px; color: var(--ink-soft); }
+  .input-wrap > svg { position: absolute; top: 50%; right: 15px; transform: translateY(-50%); width: 18px; height: 18px; color: var(--ink-soft); pointer-events: none; }
   input {
-    width: 100%; padding: 12px 40px 12px 14px; border-radius: 10px;
-    border: 1.5px solid var(--line); font-family: inherit; font-size: 14px;
-    background: var(--bg); color: var(--ink);
+    width: 100%; height: 52px; padding: 0 46px; border-radius: 12px;
+    border: 1.5px solid var(--line); background: var(--field); color: var(--ink);
+    font-family: inherit; font-size: 16px; /* ۱۶ پیکسل: جلوگیری از زوم خودکار در iOS */
+    transition: border-color .15s, box-shadow .15s, background .15s;
   }
-  input::placeholder { color: #a7b0b9; }
-  input:focus { outline: none; border-color: var(--orange); background: #fff; box-shadow: 0 0 0 3px rgba(239,125,26,0.1); }
- 
+  input::placeholder { color: #a3acb6; }
+  input:focus { outline: none; border-color: var(--orange); background: #fff; box-shadow: 0 0 0 4px rgba(239,125,26,0.14); }
+
+  .input-wrap .eye {
+    position: absolute; top: 50%; left: 5px; transform: translateY(-50%);
+    width: 42px; height: 42px; margin: 0; padding: 0; border-radius: 10px;
+    background: none; box-shadow: none; color: var(--ink-soft);
+    display: grid; place-items: center;
+  }
+  .eye svg { width: 19px; height: 19px; }
+  .eye.on { color: var(--orange-deep); }
+
   button {
-    width: 100%; padding: 13px; border-radius: 10px; border: none;
+    width: 100%; height: 52px; border-radius: 12px; border: none; margin-top: 6px;
     background: linear-gradient(95deg, var(--orange), var(--orange-deep)); color: #fff;
-    font-family: inherit; font-size: 14.5px; font-weight: 800; cursor: pointer; margin-top: 6px;
-    box-shadow: var(--shadow-sm); transition: opacity 0.15s ease, transform 0.1s ease;
+    font-family: inherit; font-size: 15px; font-weight: 800; cursor: pointer;
+    box-shadow: 0 14px 26px -12px rgba(199,90,5,0.75);
+    transition: transform .12s ease, opacity .15s ease;
+    -webkit-tap-highlight-color: transparent;
   }
-  button:hover { opacity: 0.92; }
-  button:active { transform: scale(0.99); }
-  button:disabled { opacity: 0.55; cursor: not-allowed; }
- 
-  .msg { margin-top: 14px; font-size: 12.5px; border-radius: 9px; padding: 9px 11px; display: none; }
+  button:hover { opacity: .93; }
+  button:active { transform: scale(0.985); }
+  button:disabled { opacity: .55; cursor: not-allowed; }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+
+  .msg { margin-top: 14px; font-size: 13px; line-height: 1.8; border-radius: 10px; padding: 10px 12px; display: none; }
   .msg.error { display: block; background: #fdeceb; color: var(--error); border: 1px solid rgba(214,75,58,0.3); }
   .msg.info { display: block; background: var(--teal-tint); color: var(--teal); border: 1px solid rgba(15,124,140,0.3); }
- 
+
   .contact-row {
-    margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--line);
-    font-size: 11.5px; color: var(--ink-soft); text-align: center; line-height: 2;
+    margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line);
+    font-size: 12px; color: var(--ink-soft); text-align: center; line-height: 2;
   }
-  .contact-row b { color: var(--orange-deep); font-weight: 800; font-family: 'JetBrains Mono'; }
- 
-  /* ===== متن سمت چپ (هدلاین) ===== */
-  .hero-text { max-width: 560px; position: relative; z-index: 1; }
-  .hero-text .eyebrow {
-    display: inline-block; font-size: 11.5px; font-weight: 700; letter-spacing: 0.6px;
-    color: var(--orange-deep); background: var(--orange-tint); border: 1px solid rgba(239,125,26,0.3);
-    padding: 6px 14px; border-radius: 100px; margin-bottom: 20px;
+  .contact-row b { color: var(--orange-deep); font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+
+  .credit { position: relative; z-index: 1; text-align: center; padding: 14px 12px calc(16px + env(safe-area-inset-bottom)); font-size: 11.5px; color: rgba(255,255,255,0.8); }
+  .credit a { color: #ffd9a0; text-decoration: none; font-weight: 700; }
+
+  /* ===== موبایل و تبلت ===== */
+  @media (max-width: 900px) {
+    .wrap { flex-direction: column; align-items: stretch; gap: 26px; padding: calc(30px + env(safe-area-inset-top)) 18px 20px; }
+    .hero { max-width: none; }
+    .hero-logo { width: 52px; height: 52px; border-radius: 16px; margin-bottom: 18px; }
+    .hero-logo img { width: 34px; height: 34px; }
+    .hero h2 { font-size: 25px; margin-bottom: 10px; }
+    .hero p { font-size: 13px; line-height: 1.9; }
+    .chips { flex-wrap: nowrap; overflow-x: auto; margin: 18px -18px 0; padding: 0 18px; scrollbar-width: none; }
+    .chips::-webkit-scrollbar { display: none; }
+    .card { max-width: none; padding: 30px 22px 24px; border-radius: 22px; }
   }
-  .hero-text h2 { font-size: 34px; font-weight: 900; line-height: 1.6; margin-bottom: 18px; color: var(--ink); }
-  .hero-text h2 span { color: var(--orange-deep); }
-  .hero-text p { font-size: 14.5px; color: var(--ink-soft); line-height: 2; max-width: 460px; }
-  @media (max-width: 980px) { .hero-text p { margin: 0 auto; } }
- 
-  .plan-watermark {
-    position: absolute;
-    top: 50%; left: 50%;
-    width: 640px; height: 640px;
-    transform: translate(-50%, -50%);
-    background-image: url('assets/logo.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    opacity: 0.06;
-    pointer-events: none;
-    z-index: 0;
-  }
+  @media (max-width: 380px) { .hero h2 { font-size: 22px; } .card { padding: 26px 18px 22px; } }
+  @media (max-height: 560px) and (orientation: landscape) { .hero p, .chips { display: none; } }
+
+  @media (prefers-reduced-motion: reduce) { .sym, .card { animation: none; } }
 </style>
 </head>
 <body>
- 
-  <div class="bg-scene">
-    <div class="bg-blob b1"></div>
-    <div class="bg-blob b2"></div>
-    <div class="bg-blob b3"></div>
-    <div class="bg-grid"></div>
+
+  <div class="stage" aria-hidden="true">
+    <div class="plan-watermark"></div>
+    <span class="sym" style="top:6%;  right:8%;  font-size:96px;  animation-delay:-2s">∑</span>
+    <span class="sym" style="top:14%; left:6%;   font-size:70px;  animation-delay:-7s">π</span>
+    <span class="sym" style="top:42%; right:42%; font-size:120px; animation-delay:-4s">∫</span>
+    <span class="sym" style="top:58%; left:10%;  font-size:84px;  animation-delay:-9s">√</span>
+    <span class="sym" style="bottom:8%; right:14%; font-size:90px; animation-delay:-5s">∞</span>
+    <span class="sym" style="bottom:20%; left:44%; font-size:64px; animation-delay:-11s">Δ</span>
+    <span class="sym" style="top:30%; left:34%;  font-size:56px;  animation-delay:-1s">≈</span>
   </div>
-  <div class="corner-cut tl"></div>
-  <div class="corner-cut br"></div>
-  <div class="plan-watermark"></div>
- 
-  <div class="wrap">
- 
-    <div class="hero-text">
-      <span class="eyebrow">سامانهٔ هوشمند آموزشی</span>
-      <h2>پلی میان <span>مشاور، دبیر و دانش‌آموز</span> در مسیر یادگیری</h2>
-      <p>برنامه‌ریزی مطالعاتی هوشمند، آزمون آنلاین زمان‌دار، و پیگیری دقیق روند پیشرفت — همه در یک سامانهٔ یکپارچه، برای مؤسسهٔ آما.</p>
-    </div>
- 
-    <div class="glass-card">
-      <div class="glass-brand">
+
+  <main class="wrap">
+
+    <section class="hero">
+      <div class="hero-logo"><img src="assets/logo.png" alt="آما"></div>
+      <h2>پلی میان مشاور، دبیر و دانش‌آموز در مسیر یادگیری</h2>
+      <p>برنامه‌ریزی مطالعاتی هوشمند، آزمون آنلاین زمان‌دار و پیگیری دقیق روند پیشرفت، همه در یک سامانه برای مؤسسهٔ آما.</p>
+      <div class="chips">
+        <span class="chip">برنامهٔ هفتگی</span>
+        <span class="chip">آزمون آنلاین</span>
+        <span class="chip">کارنامهٔ دقیق</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="brand">
         <img src="assets/logo.png" alt="آما">
         <div>
           <div class="name">آما</div>
           <div class="tag">پنل ورود کاربران</div>
         </div>
       </div>
- 
+
       <h1>به سامانهٔ هوشمند آما خوش آمدید</h1>
       <p class="sub">با نام کاربری و رمز عبوری که دریافت کرده‌اید وارد شوید.</p>
- 
+
       <form id="loginForm">
         <div class="field">
           <label for="username">نام کاربری</label>
           <div class="input-wrap">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
-            <input type="text" id="username" placeholder="مثلاً std482913" autocomplete="username" required>
+            <input type="text" id="username" placeholder="مثلاً std482913" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" required>
           </div>
         </div>
         <div class="field">
@@ -175,48 +224,63 @@
           <div class="input-wrap">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
             <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+            <button type="button" class="eye" id="togglePw" aria-label="نمایش رمز">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
           </div>
         </div>
         <button type="submit" id="loginBtn">ورود به سامانه</button>
-        <div class="msg" id="msgBox"></div>
+        <div class="msg" id="msgBox" role="alert"></div>
       </form>
- 
+
       <div class="contact-row">
         <b>۰۹۰۴۶۳۴۱۰۳۴</b> — نی‌ریز، خیابان شعله، جنب عطاری
       </div>
-    </div>
- 
-  </div>
- 
+    </section>
+
+  </main>
+
+  <div class="credit">توسعه‌یافته توسط ابوالفضل حسن‌نژاد — تلگرام: <a href="https://t.me/abolfazl9195" target="_blank" rel="noopener">@abolfazl9195</a></div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <script>
     const form = document.getElementById('loginForm');
     const msgBox = document.getElementById('msgBox');
     const loginBtn = document.getElementById('loginBtn');
- 
+
     function showMessage(text, type) { msgBox.textContent = text; msgBox.className = 'msg ' + type; }
- 
+
+    // نمایش/پنهان کردن رمز
+    const pw = document.getElementById('password');
+    const eye = document.getElementById('togglePw');
+    eye.addEventListener('click', () => {
+      const show = pw.type === 'password';
+      pw.type = show ? 'text' : 'password';
+      eye.classList.toggle('on', show);
+      eye.setAttribute('aria-label', show ? 'پنهان کردن رمز' : 'نمایش رمز');
+    });
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       msgBox.className = 'msg';
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
- 
+
       loginBtn.disabled = true;
       loginBtn.textContent = 'در حال ورود...';
- 
+
       const email = usernameToEmail(username);
       const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
- 
+
       if (error) {
         showMessage('نام کاربری یا رمز عبور اشتباه است.', 'error');
         loginBtn.disabled = false; loginBtn.textContent = 'ورود به سامانه';
         return;
       }
- 
+
       const { data: profile, error: profileError } = await supabaseClient.from('profiles').select('*').eq('id', data.user.id).single();
- 
+
       if (profileError || !profile) {
         showMessage('حساب شما یافت نشد. با پشتیبانی تماس بگیرید.', 'error');
         loginBtn.disabled = false; loginBtn.textContent = 'ورود به سامانه';
@@ -227,14 +291,11 @@
         loginBtn.disabled = false; loginBtn.textContent = 'ورود به سامانه';
         return;
       }
- 
+
       showMessage('ورود موفق. در حال انتقال...', 'info');
       window.location.href = 'dashboard.html';
     });
   </script>
- 
-  <div style="position:relative; z-index:1; text-align:center; padding:16px 12px; font-size:11px; color:var(--ink-soft); font-family:Vazirmatn,sans-serif;">توسعه‌یافته توسط ابوالفضل حسن‌نژاد — تلگرام: <a href="https://t.me/abolfazl9195" target="_blank" style="color:#ef7d1a; text-decoration:none;">@abolfazl9195</a></div>
- 
+
 </body>
 </html>
- 
