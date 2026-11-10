@@ -48,14 +48,6 @@
     from { transform: translateY(0) rotate(-4deg); }
     to   { transform: translateY(-28px) rotate(7deg); }
   }
-  .plan-watermark {
-    position: absolute; top: 50%; left: 50%;
-    width: min(620px, 120vw); height: min(620px, 120vw);
-    transform: translate(-50%, -50%);
-    background: url('assets/logo.png') center / contain no-repeat;
-    filter: brightness(0) invert(1); opacity: 0.07;
-    pointer-events: none;
-  }
 
   /* ===== چیدمان ===== */
   .wrap {
@@ -176,7 +168,6 @@
 <body>
 
   <div class="stage" aria-hidden="true">
-    <div class="plan-watermark"></div>
     <span class="sym" style="top:6%;  right:8%;  font-size:96px;  animation-delay:-2s">∑</span>
     <span class="sym" style="top:14%; left:6%;   font-size:70px;  animation-delay:-7s">π</span>
     <span class="sym" style="top:42%; right:42%; font-size:120px; animation-delay:-4s">∫</span>
